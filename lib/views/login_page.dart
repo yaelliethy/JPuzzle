@@ -30,32 +30,35 @@ class LoginPage extends StatelessWidget {
                   color: Colors.white,
                 ),
               ),
-                Container(
+                Padding(
                   padding: const EdgeInsets.all(10.0),
-                  decoration: const BoxDecoration(
-                    borderRadius: BorderRadius.all(
-                      Radius.circular(10.0),
-                    ),
-                    color: Color(0xFF4FBDBA),
-                  ),
-                  child: InkWell(onTap: () async {
-                  final provider = Provider.of<Authentication>(
-                    context,
-                    listen: false,
-                  );
-                  await provider.googleLogin();
-                }, 
-                child: ListTile(
-                    leading: Image.asset('assets/images/google.png'),
-                    title: const Text(
-                      'Login with Google',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 18.0,
-                        fontWeight: FontWeight.bold,
+                  child: InkWell(
+                    onTap: () async {
+                      final provider = Provider.of<Authentication>(
+                        context,
+                        listen: false,
+                      );
+                      await provider.googleLogin();
+                    },
+                    child: Container(
+                      decoration: const BoxDecoration(
+                        borderRadius: BorderRadius.all(
+                          Radius.circular(10.0),
+                        ),
+                        color: Color(0xFF4FBDBA),
                       ),
+                      child: ListTile(
+                          leading: Image.asset('assets/images/google.png'),
+                          title: const Text(
+                            'Login with Google',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 18.0,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
                     ),
-                  ),
                   ),
                 ),
             ],
