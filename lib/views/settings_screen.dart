@@ -1,6 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:lottie/lottie.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({Key? key}) : super(key: key);
@@ -21,30 +20,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
         title: const Text('Settings'),
         centerTitle: true,
       ),
-      body: StreamBuilder(
-        stream: FirebaseAuth.instance.authStateChanges(),
-        builder: ((context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(
-              child: Lottie.network(
-                'https://assets5.lottiefiles.com/packages/lf20_qiuhvo9f.json',
-              ),
-            );
-          } else if (snapshot.hasError) {
-            return Center(
-              child: Lottie.network(
-                'https://assets4.lottiefiles.com/packages/lf20_q4h79bkv.json',
-              ),
-            );
-          }
-          return Column(
-            children: [
-              Text(
-                'Hello ${user.displayName}',
-              ),
-            ],
-          );
-        }),
+      body: Column(
+        children: [
+          Text(
+            'Hello ${user.displayName}',
+          ),
+        ],
       ),
     );
   }
