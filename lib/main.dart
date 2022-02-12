@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:google_sign_in/google_sign_in.dart';
 import 'package:jpuzzle/services/authentication.dart';
 import 'package:jpuzzle/views/login_page.dart';
 import 'common/theme.dart';

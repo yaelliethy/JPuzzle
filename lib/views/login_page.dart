@@ -30,19 +30,7 @@ class LoginPage extends StatelessWidget {
                   color: Colors.white,
                 ),
               ),
-              InkWell(
-                onTap: () async {
-                  final provider = Provider.of<Authentication>(
-                    context,
-                    listen: false,
-                  );
-                  await provider.googleLogin();
-                },
-                child: Container(
-                  margin: const EdgeInsets.symmetric(
-                    horizontal: 100.0,
-                    vertical: 10.0,
-                  ),
+                Container(
                   padding: const EdgeInsets.all(10.0),
                   decoration: const BoxDecoration(
                     borderRadius: BorderRadius.all(
@@ -50,7 +38,14 @@ class LoginPage extends StatelessWidget {
                     ),
                     color: Color(0xFF4FBDBA),
                   ),
-                  child: ListTile(
+                  child: InkWell(onTap: () async {
+                  final provider = Provider.of<Authentication>(
+                    context,
+                    listen: false,
+                  );
+                  await provider.googleLogin();
+                }, 
+                child: ListTile(
                     leading: Image.asset('assets/images/google.png'),
                     title: const Text(
                       'Login with Google',
@@ -61,8 +56,8 @@ class LoginPage extends StatelessWidget {
                       ),
                     ),
                   ),
+                  ),
                 ),
-              ),
             ],
           ),
         ),
