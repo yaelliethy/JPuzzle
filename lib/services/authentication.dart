@@ -11,21 +11,35 @@ class Authentication extends ChangeNotifier {
   GoogleSignInAccount get user => _user!;
 
   Future<void> googleLogin() async {
+    late UserCredential userCredential;
     if (kIsWeb) {
+      GoogleAuthProvider googleProvider = GoogleAuthProvider();
+
+      googleProvider.addScope(
+          'https://www.googleapis.com/auth/contacts.readonly');
+      googleProvider.setCustomParameters({
+        'login_hint': 'user@example.com'
+      });
+      userCredential=await FirebaseAuth.instance.signInWithPopup(googleProvider);
+    }
+    else {
       final googleUser = await googleSignIn.signIn();
       if (googleUser == null) return;
       _user = googleUser;
 
       final googleAuth = await googleUser.authentication;
 
-      final credential = GoogleAuthProvider.credential(
+      var credential = GoogleAuthProvider.credential(
         accessToken: googleAuth.accessToken,
         idToken: googleAuth.idToken,
       );
 
-      await FirebaseAuth.instance.signInWithCredential(credential);
+      userCredential=await FirebaseAuth.instance.signInWithCredential(credential);
 
       notifyListeners();
     }
+    userCredential.user?.getIdToken().then((value) {
+      print(value);
+    });
   }
 }

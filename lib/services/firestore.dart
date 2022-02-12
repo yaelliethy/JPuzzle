@@ -4,22 +4,21 @@ class FirestoreProvider{
   FirebaseFirestore _firestore = FirebaseFirestore.instance;
   CollectionReference _collectionReference = FirebaseFirestore.instance.collection('users');
 
-  Future<void> addUser(String name, String email, String password) async {
-    await _collectionReference.doc(name).set({
+  Future<void> addUser(String name, String token) async {
+    await _collectionReference.doc(token).set({
       'name': name,
-      'email': email,
-      'password': password,
+      'token': token,
     });
 
   }
 
-  Future<void> updateUser(String name, String email, String password) async {
-    await _collectionReference.doc(name).update({
-      'name': name,
-      'email': email,
-      'password': password,
-    });
-  }
+  // Future<void> updateUser(String name, String email, String password) async {
+  //   await _collectionReference.doc(name).update({
+  //     'name': name,
+  //     'email': email,
+  //     'password': password,
+  //   });
+  // }
 
   Future<void> deleteUser(String name) async {
     await _collectionReference.doc(name).delete();
