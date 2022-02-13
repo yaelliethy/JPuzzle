@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:jpuzzle/services/authentication.dart';
 import 'package:jpuzzle/views/login_screen.dart';
-import 'package:jpuzzle/views/home_page.dart';
 import 'common/theme.dart';
 import 'package:provider/provider.dart';
 

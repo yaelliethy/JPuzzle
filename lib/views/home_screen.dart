@@ -1,11 +1,9 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:jpuzzle/common/constants.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:jpuzzle/services/authentication.dart';
-import 'package:provider/provider.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -17,15 +15,16 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   double _dimensions = 3;
   late Widget _icon;
-    @override
-    void initState() {
-      _icon = SvgPicture.asset(
-        emojis[3]!,
-        key: const ValueKey<int>(3),
-        height: 100,
-      );
-      super.initState();
-    }
+  @override
+  void initState() {
+    _icon = SvgPicture.asset(
+      emojis[3]!,
+      key: const ValueKey<int>(3),
+      height: 100,
+    );
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     final user = FirebaseAuth.instance.currentUser!;
@@ -36,23 +35,13 @@ class _HomeScreenState extends State<HomeScreen> {
           'assets/images/backgrounds/Kander.svg',
           fit: BoxFit.cover,
         ),
-        toolbarHeight: size.height * 0.2,
-        leading: Container(
-          margin: const EdgeInsets.all(10.0),
-          child: CircleAvatar(
-            backgroundImage: NetworkImage(
-              user.photoURL!,
-            ),
-          ),
-        ),
-        title: const Padding(
-          padding: EdgeInsets.all(10.0),
-          child: Text(
-            'Home',
-            style: TextStyle(
-              fontSize: 24.0,
-              fontWeight: FontWeight.bold,
-            ),
+        toolbarHeight: size.height * 0.1,
+        title: const Text(
+          'Home',
+          style: TextStyle(
+            fontSize: 24.0,
+            fontWeight: FontWeight.bold,
+            color: Colors.black,
           ),
         ),
         centerTitle: true,
@@ -61,12 +50,19 @@ class _HomeScreenState extends State<HomeScreen> {
         actions: [
           Padding(
             padding: const EdgeInsets.all(10.0),
-            child: IconButton(
-              onPressed: () async {
-                final provider = context.read<Authentication>();
-                await provider.signOut();
-              },
-              icon: const FaIcon(FontAwesomeIcons.signOutAlt),
+            child: DropdownButton<String>(
+              items: <String>['Sign Out'].map((String value) {
+                return DropdownMenuItem<String>(
+                  value: value,
+                  child: Text(value),
+                );
+              }).toList(),
+              onChanged: (_) {},
+              icon: CircleAvatar(
+                backgroundImage: NetworkImage(
+                  user.photoURL!,
+                ),
+              ),
             ),
           ),
         ],
@@ -130,16 +126,16 @@ class _HomeScreenState extends State<HomeScreen> {
                       });
                     },
                   ),
-                    AnimatedSwitcher(
-                      duration: const Duration(milliseconds: 300),
-                      child: _icon,
-                      transitionBuilder: (child, animation) {
-                        return ScaleTransition(
-                          scale: animation,
-                          child: child,
-                        );
-                      },
-                    ),
+                  AnimatedSwitcher(
+                    duration: const Duration(milliseconds: 300),
+                    child: _icon,
+                    transitionBuilder: (child, animation) {
+                      return ScaleTransition(
+                        scale: animation,
+                        child: child,
+                      );
+                    },
+                  ),
                 ],
               ),
             ),
