@@ -16,6 +16,16 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   double _dimensions = 3;
+  late Widget _icon;
+    @override
+    void initState() {
+      _icon = SvgPicture.asset(
+        emojis[3]!,
+        key: const ValueKey<int>(3),
+        height: 100,
+      );
+      super.initState();
+    }
   @override
   Widget build(BuildContext context) {
     final user = FirebaseAuth.instance.currentUser!;
@@ -111,10 +121,25 @@ class _HomeScreenState extends State<HomeScreen> {
                     divisions: 6,
                     onChanged: (double value) {
                       setState(() {
-                        _dimensions = value;
+                        _icon = SvgPicture.asset(
+                          emojis[value.roundToDouble()]!,
+                          key: ValueKey<int>(value.round()),
+                          height: 100,
+                        );
+                        _dimensions = value.roundToDouble();
                       });
                     },
                   ),
+                    AnimatedSwitcher(
+                      duration: const Duration(milliseconds: 300),
+                      child: _icon,
+                      transitionBuilder: (child, animation) {
+                        return ScaleTransition(
+                          scale: animation,
+                          child: child,
+                        );
+                      },
+                    ),
                 ],
               ),
             ),

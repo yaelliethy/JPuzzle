@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   viewBox="0 0 64 64"
+   enable-background="new 0 0 64 64"
+   version="1.1"
+   id="svg12"
+   sodipodi:docname="7.svg"
+   inkscape:version="0.92.5 (2060ec1f9f, 2020-04-08)">
+  <metadata
+     id="metadata18">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <defs
+     id="defs16" />
+  <sodipodi:namedview
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1"
+     objecttolerance="10"
+     gridtolerance="10"
+     guidetolerance="10"
+     inkscape:pageopacity="0"
+     inkscape:pageshadow="2"
+     inkscape:window-width="1294"
+     inkscape:window-height="704"
+     id="namedview14"
+     showgrid="false"
+     inkscape:zoom="7.375"
+     inkscape:cx="32.379206"
+     inkscape:cy="30.265962"
+     inkscape:window-x="72"
+     inkscape:window-y="27"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="svg12" />
+  <path
+     d="M 2.3391416,36.002841 C 4.5829966,52.406046 19.633313,63.918997 36.136435,61.679153 52.53964,59.435298 64.05259,44.384985 61.812746,27.88186 59.564881,11.578574 44.414648,0.06161294 28.011444,2.3054672 11.612249,4.4494021 0.09528756,19.599635 2.3391416,36.002841"
+     id="path2"
+     inkscape:connector-curvature="0"
+     style="fill:#ffdd67" />
+  <g
+     id="g10"
+     style="fill:#664e27"
+     transform="rotate(9.9024776,31.215087,33.993717)"
+     inkscape:transform-center-x="-0.13559322"
+     inkscape:transform-center-y="0.6779661">
+    <circle
+       cx="42.400002"
+       cy="24.700001"
+       r="5"
+       id="circle4" />
+    <circle
+       cx="19.700001"
+       cy="28.700001"
+       r="5"
+       id="circle6" />
+    <path
+       d="m 43.3,41.8 c -5.8,-1.5 -12,-0.4 -16.9,3 -1.2,0.9 1.1,4 2.3,3.2 3.2,-2.3 8.4,-3.8 13.7,-2.4 1.3,0.3 2.4,-3.3 0.9,-3.8"
+       id="path8"
+       inkscape:connector-curvature="0" />
+  </g>
+</svg>

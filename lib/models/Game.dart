@@ -4,13 +4,8 @@ class Game {
   final int time;
   final int dimension;
   final int score;
-
-  Game({
-    required this.id,
-    required this.time,
-    required this.dimension,
-    required this.score,
-  });
+  final String date;
+  Game({required this.id, required this.time, required this.dimension, required this.score, required this.date});
 
   factory Game.fromJson(
     Map<String, dynamic> json,
@@ -20,6 +15,14 @@ class Game {
       time: json['time'],
       dimension: json['dimension'],
       score: json['score'],
+      date: json['date']
     );
   }
+  Map<String, dynamic> toJson() => {
+    'id': id,
+    'time': time,
+    'dimension': dimension,
+    'score': score,
+    'date': date
+  };
 }
