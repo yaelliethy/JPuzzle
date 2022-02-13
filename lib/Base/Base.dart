@@ -1,7 +1,7 @@
 import 'dart:math';
 
 import 'package:jpuzzle/Base/Direction.dart';
-import 'package:jpuzzle/Base/Tile.dart';
+import 'package:jpuzzle/models/Tile.dart';
 import 'package:jpuzzle/Base/TileTypes.dart';
 
 class Base{

@@ -3,12 +3,12 @@ import 'package:flutter/cupertino.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:jpuzzle/services/firestore.dart';
-
+import 'package:jpuzzle/models/User.dart' as user_model;
 class Authentication extends ChangeNotifier {
   final googleSignIn = GoogleSignIn();
 
   GoogleSignInAccount? _user;
-
+  late user_model.User currentUser;
   GoogleSignInAccount get user => _user!;
   FirestoreProvider _firestoreProvider = FirestoreProvider();
   Future<void> googleLogin() async {
@@ -39,7 +39,7 @@ class Authentication extends ChangeNotifier {
 
       notifyListeners();
     }
-    _firestoreProvider.addUser(userCredential.user!.displayName!, (await userCredential.user?.getIdToken())!);
+    currentUser=await _firestoreProvider.addUser(userCredential.user!.displayName!, (await userCredential.user?.getIdToken())!);
   }
   Future <void> signOut()  async {
     await FirebaseAuth.instance.signOut();
