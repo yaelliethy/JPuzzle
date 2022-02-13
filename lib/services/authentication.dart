@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
+import 'package:jpuzzle/services/firestore.dart';
 
 class Authentication extends ChangeNotifier {
   final googleSignIn = GoogleSignIn();
@@ -9,7 +10,7 @@ class Authentication extends ChangeNotifier {
   GoogleSignInAccount? _user;
 
   GoogleSignInAccount get user => _user!;
-
+  FirestoreProvider _firestoreProvider = FirestoreProvider();
   Future<void> googleLogin() async {
     late UserCredential userCredential;
     if (kIsWeb) {
@@ -38,8 +39,10 @@ class Authentication extends ChangeNotifier {
 
       notifyListeners();
     }
-    userCredential.user?.getIdToken().then((value) {
-      print(value);
-    });
+    _firestoreProvider.addUser(userCredential.user!.displayName!, (await userCredential.user?.getIdToken())!);
+  }
+  Future <void> signOut()  async {
+    await FirebaseAuth.instance.signOut();
+    await googleSignIn.signOut();
   }
 }

@@ -1,9 +1,9 @@
 //User model with High score, high score date, high score time, and high score dimension
 class User {
-  String highScore;
+  int highScore;
   String highScoreDate;
-  String highScoreTime;
-  String highScoreDimension;
+  int highScoreTime;
+  int highScoreDimension;
 
   User({required this.highScore, required this.highScoreDate, required this.highScoreTime, required this.highScoreDimension});
 

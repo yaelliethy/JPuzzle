@@ -1,13 +1,15 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-
-class FirestoreProvider{
-  FirebaseFirestore _firestore = FirebaseFirestore.instance;
-  CollectionReference _collectionReference = FirebaseFirestore.instance.collection('users');
+class FirestoreProvider {
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  final CollectionReference _users = FirebaseFirestore.instance.collection('users');
 
   Future<void> addUser(String name, String token) async {
-    await _collectionReference.doc(token).set({
+    await _users.doc(token).set({
       'name': name,
-      'token': token,
+      'highScore': 0,
+      'highScoreDate': '',
+      'highScoreTime': 0,
+      'highScoreDimension': 0,
     });
 
   }
@@ -21,10 +23,10 @@ class FirestoreProvider{
   // }
 
   Future<void> deleteUser(String name) async {
-    await _collectionReference.doc(name).delete();
+    await _users.doc(name).delete();
   }
 
   Future<QuerySnapshot> getUsers() async {
-    return await _collectionReference.get();
+    return await _users.get();
   }
 }
