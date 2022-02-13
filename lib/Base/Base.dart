@@ -115,9 +115,13 @@ class Base{
         break;
       }
     }
-    tiles.addAll(getFromPointAToB(1, numbers[0], true));
+    tiles.addAll(getFromPointAToB(0, 0, 1, 0));
+    int x = 1;
+    int y = 0;
     for(int i = 0; i < dimension-1; i++){
-      tiles.addAll(getFromPointAToB(numbers[i], numbers[i+1], false));
+      tiles.addAll(getFromPointAToB(x, y, numbers[i]+(dimension*y), y+1));
+      x=numbers[i]+(dimension*y);
+      y+=1;
     }
     return shuffle(tiles);
   }
@@ -158,26 +162,26 @@ class Base{
   int getIndex(int x, int y){
     return x * dimension + y;
   }
-  List<Tile> getFromPointAToB(int a, int b, bool sameX){
+  List<Tile> getFromPointAToB(int ax, int bx, int ay, int by){
     List<Tile> tiles = [];
-    if(sameX){
-      for(int i = 0; i < b-a; i++){
-        tiles.add(Tile(index: a+i, type: TileType.horizontal));
+    if(ax==bx){
+      for(int i = 0; i < by-ay; i++){
+        tiles.add(Tile(index: ay+i, type: TileType.horizontal));
       }
     }
     else{
-      if(a==b){
-        return [Tile(index: a, type: TileType.vertical)];
+      if(ay==by){
+        return [Tile(index: getIndex(bx, by), type: TileType.vertical)];
       }
-      else if(a<b){
-        tiles=getFromPointAToB(a, b, false);
+      else if(ay<by){
+        tiles=getFromPointAToB(ax, bx, ay, by);
         tiles.removeLast();
-        tiles.add(Tile(index: b, type: TileType.rightDown));
+        tiles.add(Tile(index: getIndex(bx, by), type: TileType.rightDown));
       }
       else{
-        tiles=getFromPointAToB(a, b, false);
+        tiles=getFromPointAToB(ax, bx, ay, by);
         tiles.removeLast();
-        tiles.add(Tile(index: b, type: TileType.leftDown));
+        tiles.add(Tile(index: getIndex(bx, by), type: TileType.leftDown));
       }
     }
     return tiles;
