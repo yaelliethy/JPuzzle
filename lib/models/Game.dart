@@ -1,5 +1,5 @@
 //Game model with time, dimension and score
-class Game{
+class Game {
   final int id;
   final int time;
   final int dimension;
@@ -7,7 +7,9 @@ class Game{
   final String date;
   Game({required this.id, required this.time, required this.dimension, required this.score, required this.date});
 
-  factory Game.fromJson(Map<String, dynamic> json){
+  factory Game.fromJson(
+    Map<String, dynamic> json,
+  ) {
     return Game(
       id: json['id'],
       time: json['time'],
