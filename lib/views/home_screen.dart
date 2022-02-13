@@ -26,16 +26,24 @@ class _HomeScreenState extends State<HomeScreen> {
           'assets/images/backgrounds/Kander.svg',
           fit: BoxFit.cover,
         ),
-        toolbarHeight: size.height * 0.3,
+        toolbarHeight: size.height * 0.2,
         leading: Container(
           margin: const EdgeInsets.all(10.0),
           child: CircleAvatar(
-            backgroundImage: NetworkImage(user.photoURL!, scale: 100.0),
+            backgroundImage: NetworkImage(
+              user.photoURL!,
+            ),
           ),
         ),
         title: const Padding(
           padding: EdgeInsets.all(10.0),
-          child: Text('Home'),
+          child: Text(
+            'Home',
+            style: TextStyle(
+              fontSize: 24.0,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
         ),
         centerTitle: true,
         backgroundColor: kBackgroundColor,
@@ -65,9 +73,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   color: Colors.white,
                 ),
                 children: [
-                  const TextSpan(
-                    text: 'Hello ',
-                  ),
+                  const TextSpan(text: 'Hello '),
                   TextSpan(
                     text: user.displayName,
                     style: const TextStyle(
@@ -111,7 +117,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                 ],
               ),
-            )
+            ),
           ],
         ),
       ),
