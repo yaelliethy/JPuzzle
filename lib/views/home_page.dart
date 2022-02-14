@@ -1,18 +1,20 @@
+import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:jpuzzle/common/constants.dart';
+import 'package:jpuzzle/widgets/custom_dropdown.dart';
 
-class HomeScreen extends StatefulWidget {
-  const HomeScreen({Key? key}) : super(key: key);
+class HomePage extends StatefulWidget {
+  const HomePage({Key? key}) : super(key: key);
 
   @override
-  _HomeScreenState createState() => _HomeScreenState();
+  _HomePageState createState() => _HomePageState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
+class _HomePageState extends State<HomePage> {
   double _dimensions = 3;
   late Widget _icon;
   @override
@@ -50,18 +52,27 @@ class _HomeScreenState extends State<HomeScreen> {
         actions: [
           Padding(
             padding: const EdgeInsets.all(10.0),
-            child: DropdownButton<String>(
-              items: <String>['Sign Out'].map((String value) {
-                return DropdownMenuItem<String>(
+            child: DropdownButton2<IconData>(
+              items: <IconData>[Icons.exit_to_app].map((IconData value) {
+                  return DropdownMenuItem<IconData>(
                   value: value,
-                  child: Text(value),
+                  alignment: Alignment.center,
+                  child: Icon(
+                    value,
+                    color: Colors.black,
+                  ),
                 );
               }).toList(),
               onChanged: (_) {},
-              icon: CircleAvatar(
+              hint: CircleAvatar(
                 backgroundImage: NetworkImage(
                   user.photoURL!,
                 ),
+              ),
+              icon: const Icon(
+                Icons.arrow_drop_down,
+                color: Colors.transparent,
+                size: 15,
               ),
             ),
           ),
