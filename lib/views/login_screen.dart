@@ -13,9 +13,21 @@ class LoginScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       body: StreamBuilder(
+<<<<<<< HEAD
         stream: FirebaseAuth.instance.authStateChanges(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
+=======
+          stream: FirebaseAuth.instance.authStateChanges(),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return Container();
+            } else if (snapshot.hasData) {
+              return const HomePage();
+            } else if (snapshot.hasError) {
+              return Container();
+            }
+>>>>>>> e234aa926f1b3ce5d3010b97602d63cefb497b38
             return Center(
               child: Padding(
                 padding: const EdgeInsets.symmetric(

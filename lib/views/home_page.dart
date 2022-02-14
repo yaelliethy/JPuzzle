@@ -1,9 +1,14 @@
+import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:jpuzzle/common/constants.dart';
+<<<<<<< HEAD
 import 'package:provider/provider.dart';
+=======
+import 'package:jpuzzle/widgets/custom_dropdown.dart';
+>>>>>>> e234aa926f1b3ce5d3010b97602d63cefb497b38
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -50,6 +55,7 @@ class _HomePageState extends State<HomePage> {
         actions: [
           Padding(
             padding: const EdgeInsets.all(10.0),
+<<<<<<< HEAD
             child: DropdownButton<String>(
               elevation: 0,
               alignment: Alignment.center,
@@ -59,15 +65,29 @@ class _HomePageState extends State<HomePage> {
                 'Logout',
               ].map((String value) {
                 return DropdownMenuItem<String>(
+=======
+            child: DropdownButton2<IconData>(
+              items: <IconData>[Icons.exit_to_app].map((IconData value) {
+                  return DropdownMenuItem<IconData>(
+>>>>>>> e234aa926f1b3ce5d3010b97602d63cefb497b38
                   value: value,
-                  child: Text(value),
+                  alignment: Alignment.center,
+                  child: Icon(
+                    value,
+                    color: Colors.black,
+                  ),
                 );
               }).toList(),
               onChanged: (_) {},
-              icon: CircleAvatar(
+              hint: CircleAvatar(
                 backgroundImage: NetworkImage(
                   user.photoURL!,
                 ),
+              ),
+              icon: const Icon(
+                Icons.arrow_drop_down,
+                color: Colors.transparent,
+                size: 15,
               ),
             ),
           ),
