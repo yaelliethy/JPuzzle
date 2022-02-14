@@ -2,10 +2,12 @@ import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:jpuzzle/common/constants.dart';
 import 'package:provider/provider.dart';
 import 'package:jpuzzle/widgets/custom_dropdown.dart';
+
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
 
@@ -51,9 +53,9 @@ class _HomePageState extends State<HomePage> {
         actions: [
           Padding(
             padding: const EdgeInsets.all(10.0),
-              child: DropdownButton2<IconData>(
+            child: DropdownButton2<IconData>(
               items: <IconData>[Icons.exit_to_app].map((IconData value) {
-                  return DropdownMenuItem<IconData>(
+                return DropdownMenuItem<IconData>(
                   value: value,
                   alignment: Alignment.center,
                   child: Icon(
@@ -149,6 +151,10 @@ class _HomePageState extends State<HomePage> {
                 ],
               ),
             ),
+            ElevatedButton(
+              onPressed: () {},
+              child: Icon(FontAwesomeIcons.play),
+            )
           ],
         ),
       ),
