@@ -7,6 +7,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:jpuzzle/common/constants.dart';
 import 'package:provider/provider.dart';
 import 'package:jpuzzle/widgets/custom_dropdown.dart';
+import 'package:jpuzzle/views/game.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -152,7 +153,16 @@ class _HomePageState extends State<HomePage> {
               ),
             ),
             ElevatedButton(
-              onPressed: () {},
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => GameScreen(
+                      dimension: _dimensions.toInt(),
+                    ),
+                  ),
+                );
+              },
               child: Icon(FontAwesomeIcons.play),
             )
           ],
