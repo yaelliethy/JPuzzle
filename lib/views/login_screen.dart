@@ -13,13 +13,8 @@ class LoginScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       body: StreamBuilder(
-<<<<<<< HEAD
         stream: FirebaseAuth.instance.authStateChanges(),
         builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-=======
-          stream: FirebaseAuth.instance.authStateChanges(),
-          builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return Container();
             } else if (snapshot.hasData) {
@@ -27,31 +22,6 @@ class LoginScreen extends StatelessWidget {
             } else if (snapshot.hasError) {
               return Container();
             }
->>>>>>> e234aa926f1b3ce5d3010b97602d63cefb497b38
-            return Center(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 100.0,
-                ),
-                child: Lottie.network(
-                  'https://assets8.lottiefiles.com/packages/lf20_xiussssy.json',
-                ),
-              ),
-            );
-          } else if (snapshot.hasData) {
-            return const HomePage();
-          } else if (snapshot.hasError) {
-            return Center(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 100.0,
-                ),
-                child: Lottie.network(
-                  'https://assets1.lottiefiles.com/packages/lf20_aiphuevx.json',
-                ),
-              ),
-            );
-          }
           return Center(
             child: SingleChildScrollView(
               child: SafeArea(
