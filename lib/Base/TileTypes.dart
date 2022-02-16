@@ -6,4 +6,5 @@ enum TileType{
   leftDown,
   rightUp,
   rightDown,
+  target,
 }

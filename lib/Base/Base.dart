@@ -1,5 +1,7 @@
 import 'dart:math';
 
+import 'package:flutter/cupertino.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:jpuzzle/Base/Direction.dart';
 import 'package:jpuzzle/models/Tile.dart';
 import 'package:jpuzzle/Base/TileTypes.dart';
@@ -104,26 +106,112 @@ class Base{
     List<Tile> tiles = [];
     List<int> numbers = [];
     Random random = Random();
-    //Loop dimension times
-    for(int i = 0; i < dimension-1; i++){
-      numbers.add(random.nextInt(dimension));
+    numbers.add(random.nextInt(dimension-2)+1);
+    for(int i = 0; i < dimension-2; i++){
+      numbers.add(random.nextInt(dimension-1));
     }
     while (true){
-      int lastNum=random.nextInt(dimension);
-      if(numbers[-1] <= lastNum){
+      int lastNum=random.nextInt(dimension-1);
+      if(numbers.last <= lastNum){
         numbers.add(lastNum);
         break;
       }
     }
-    tiles.addAll(getFromPointAToB(0, 0, 1, 0));
+    //numbers=[1,0,1];
+    tiles.add(Tile(index: 0, type: TileType.horizontal));
     int x = 1;
     int y = 0;
-    for(int i = 0; i < dimension-1; i++){
-      tiles.addAll(getFromPointAToB(x, y, numbers[i]+(dimension*y), y+1));
-      x=numbers[i]+(dimension*y);
-      y+=1;
+    Direction direction = Direction.right;
+    for(int i = 0; i < numbers.length; i++){
+      int number=numbers[i];
+      if(i!=numbers.length-1) {
+        if (y != 0 && direction == Direction.down) {
+          if (number > x) {
+            tiles.add(Tile(index: getIndex(x, y), type: TileType.rightUp));
+            direction = Direction.right;
+            x++;
+          }
+          else if (number < x) {
+            tiles.add(Tile(index: getIndex(x, y), type: TileType.leftUp));
+            direction = Direction.left;
+            x--;
+          }
+          else {
+            tiles.add(Tile(index: getIndex(x, y), type: TileType.vertical));
+            direction = Direction.down;
+          }
+        }
+        if (number > x) {
+          for (int j = 0; j <= (number - x); j++) {
+            tiles.add(
+                Tile(index: getIndex(x + j, y), type: TileType.horizontal));
+            direction = Direction.right;
+          }
+          tiles.add(Tile(index: getIndex(number, y), type: TileType.leftDown));
+          direction = Direction.down;
+        }
+        else if (number < x) {
+          for (int j = 0; j <= (x - number); j++) {
+            tiles.add(
+                Tile(index: getIndex(x - j, y), type: TileType.horizontal));
+            direction = Direction.left;
+          }
+          tiles.add(Tile(index: getIndex(number, y), type: TileType.rightDown));
+          direction = Direction.down;
+        }
+        else {
+          if (direction == Direction.right) {
+            tiles.add(
+                Tile(index: getIndex(number, y), type: TileType.leftDown));
+            direction = Direction.down;
+          }
+          else if (direction == Direction.left) {
+            tiles.add(
+                Tile(index: getIndex(number, y), type: TileType.rightDown));
+            direction = Direction.down;
+          }
+          else if (direction == Direction.up) {
+            tiles.add(
+                Tile(index: getIndex(number, y), type: TileType.vertical));
+          }
+          else if (direction == Direction.down) {
+            tiles.add(
+                Tile(index: getIndex(number, y), type: TileType.vertical));
+          }
+        }
+        x = number;
+        y += 1;
+      }
+      else{
+        tiles.add(Tile(index: getIndex(x, y), type: TileType.rightUp));
+        for (int j = x+1; j < (dimension-1); j++) {
+          tiles.add(
+              Tile(index: getIndex(j, y), type: TileType.horizontal));
+          direction = Direction.right;
+        }
+      }
     }
-    return shuffle(tiles);
+    List<int> indexes = [];
+    for(int i = 0; i < tiles.length; i++){
+      indexes.add(tiles[i].index);
+    }
+    for(int i = 0; i < (dimension*dimension)-1; i++){
+      if(!indexes.contains(i)){
+        tiles.add(Tile(index: i, type: TileType.placeholder));
+      }
+    }
+    tiles=shuffle(tiles);
+    Map<int, Tile> tilesMap = {};
+    for(int i = 0; i < tiles.length; i++){
+      tiles[i].gameIndex=i;
+      tilesMap[i] = tiles[i];
+    }
+    List<Tile> finalTilesList = tilesMap.values.toList();
+    for(int i = 0; i < tilesMap.values.toList().length; i++){
+      finalTilesList[tilesMap.keys.toList()[i]]=tilesMap.values.toList()[i];
+    }
+    //return shuffle(finalTilesList);
+    return finalTilesList;
   }
   //Get all possible tiles
   List<Tile> getAllPossibleTiles(int x, int y){
@@ -160,31 +248,11 @@ class Base{
   }
   //Get index from x and y
   int getIndex(int x, int y){
-    return x * dimension + y;
+    return y * (dimension) + x;
   }
-  List<Tile> getFromPointAToB(int ax, int bx, int ay, int by){
-    List<Tile> tiles = [];
-    if(ax==bx){
-      for(int i = 0; i < by-ay; i++){
-        tiles.add(Tile(index: ay+i, type: TileType.horizontal));
-      }
-    }
-    else{
-      if(ay==by){
-        return [Tile(index: getIndex(bx, by), type: TileType.vertical)];
-      }
-      else if(ay<by){
-        tiles=getFromPointAToB(ax, bx, ay, by);
-        tiles.removeLast();
-        tiles.add(Tile(index: getIndex(bx, by), type: TileType.rightDown));
-      }
-      else{
-        tiles=getFromPointAToB(ax, bx, ay, by);
-        tiles.removeLast();
-        tiles.add(Tile(index: getIndex(bx, by), type: TileType.leftDown));
-      }
-    }
-    return tiles;
+  int getTargetX(List<int> numbers, int targetY){
+    int x=(targetY*(dimension+1))+numbers[targetY-1];
+    return x;
   }
   //Shuffle the puzzle in a way that is solvable
   List<Tile> shuffle(List<Tile> tiles){
@@ -194,6 +262,46 @@ class Base{
       if(isSolvable(newTiles)){
         return newTiles;
       }
+    }
+  }
+  static Widget getImageFromTileType(TileType tileType){
+    if(tileType==TileType.placeholder){
+      return SvgPicture.asset("assets/images/tiles/placeholder.svg");
+    }
+    else if (tileType==TileType.target){
+      return Container();
+    }
+    else {
+      String path;
+      int rotation=0;
+      if (tileType == TileType.horizontal || tileType == TileType.vertical) {
+        path = "assets/images/tiles/vertical.svg";
+      }
+      else {
+        path = "assets/images/tiles/round.svg";
+      }
+      //If vertical or leftDown rotate 0 degrees
+      if (tileType == TileType.vertical || tileType == TileType.leftDown) {
+        rotation = 0;
+      }
+      //If leftUp or horizontal rotate 90 degrees
+      else if (tileType == TileType.leftUp || tileType == TileType.horizontal) {
+        rotation = 90;
+      }
+      //If rightUp rotate 180 degrees
+      else if (tileType == TileType.rightUp) {
+        rotation = 180;
+      }
+      //If rightDown rotate 270 degrees
+      else if (tileType == TileType.rightDown) {
+        rotation = 270;
+      }
+      return Transform.rotate(
+        angle: rotation.toDouble() * pi / 180,
+        child: SvgPicture.asset(
+            path,
+        ),
+      );
     }
   }
 }
