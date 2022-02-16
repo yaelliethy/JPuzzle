@@ -200,11 +200,11 @@ class Base{
         tiles.add(Tile(index: i, type: TileType.placeholder));
       }
     }
-    tiles=shuffle(tiles);
+    //tiles=shuffle(tiles);
     Map<int, Tile> tilesMap = {};
     for(int i = 0; i < tiles.length; i++){
-      tiles[i].gameIndex=i;
-      tilesMap[i] = tiles[i];
+      tilesMap[tiles[i].gameIndex] = tiles[i];
+
     }
     List<Tile> finalTilesList = tilesMap.values.toList();
     for(int i = 0; i < tilesMap.values.toList().length; i++){

@@ -55,7 +55,13 @@ class _HomePageState extends State<HomePage> {
           Padding(
             padding: const EdgeInsets.all(10.0),
             child: DropdownButton2<IconData>(
-              items: <IconData>[Icons.exit_to_app].map((IconData value) {
+              buttonElevation: 0,
+              underline: Container(),
+              alignment: Alignment.center,
+              focusColor: Colors.transparent,
+              items: <IconData>[
+                FontAwesomeIcons.signOutAlt,
+              ].map((IconData value) {
                 return DropdownMenuItem<IconData>(
                   value: value,
                   alignment: Alignment.center,
@@ -81,78 +87,81 @@ class _HomePageState extends State<HomePage> {
         ],
       ),
       body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            RichText(
-              text: TextSpan(
-                style: GoogleFonts.poppins(
-                  fontSize: 30.0,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white,
-                ),
-                children: [
-                  const TextSpan(text: 'Hello '),
-                  TextSpan(
-                    text: user.displayName,
-                    style: const TextStyle(
-                      color: kTextColor,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            const Text(
-              'Select Your Dimensions',
-              style: TextStyle(
+        child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+          RichText(
+            text: TextSpan(
+              style: GoogleFonts.poppins(
+                fontSize: 30.0,
+                fontWeight: FontWeight.bold,
                 color: Colors.white,
               ),
+              children: [
+                const TextSpan(text: 'Hello '),
+                TextSpan(
+                  text: user.displayName,
+                  style: const TextStyle(
+                    color: kTextColor,
+                  ),
+                ),
+              ],
             ),
-            Padding(
-              padding: const EdgeInsets.symmetric(
-                horizontal: 100.0,
-                vertical: 30.0,
-              ),
-              child: Column(
-                children: [
-                  Text(
-                    '${_dimensions.toInt().toString()} × ${_dimensions.toInt().toString()}',
-                    style: const TextStyle(
-                      color: kTextColor,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 18.0,
-                    ),
+          ),
+          const Text(
+            'Select Your Dimensions',
+            style: TextStyle(
+              color: Colors.white,
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(
+              horizontal: 100.0,
+              vertical: 30.0,
+            ),
+            child: Column(
+              children: [
+                Text(
+                  '${_dimensions.toInt().toString()} × ${_dimensions.toInt().toString()}',
+                  style: const TextStyle(
+                    color: kTextColor,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 18.0,
                   ),
-                  Slider(
-                    value: _dimensions.toDouble(),
-                    min: 3.0,
-                    max: 9.0,
-                    divisions: 6,
-                    onChanged: (double value) {
-                      setState(() {
-                        _icon = SvgPicture.asset(
-                          emojis[value.roundToDouble()]!,
-                          key: ValueKey<int>(value.round()),
-                          height: 100,
-                        );
-                        _dimensions = value.roundToDouble();
-                      });
-                    },
-                  ),
-                  AnimatedSwitcher(
-                    duration: const Duration(milliseconds: 300),
-                    child: _icon,
-                    transitionBuilder: (child, animation) {
-                      return ScaleTransition(
-                        scale: animation,
-                        child: child,
+                ),
+                Slider(
+                  value: _dimensions.toDouble(),
+                  min: 3.0,
+                  max: 9.0,
+                  divisions: 6,
+                  onChanged: (double value) {
+                    setState(() {
+                      _icon = SvgPicture.asset(
+                        emojis[value.roundToDouble()]!,
+                        key: ValueKey<int>(value.round()),
+                        height: 100,
                       );
-                    },
-                  ),
-                ],
-              ),
+                      _dimensions = value.roundToDouble();
+                    });
+                  },
+                ),
+                AnimatedSwitcher(
+                  duration: const Duration(milliseconds: 300),
+                  child: _icon,
+                  transitionBuilder: (child, animation) {
+                    return ScaleTransition(
+                      scale: animation,
+                      child: child,
+                    );
+                  },
+                ),
+              ],
             ),
-            ElevatedButton(
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(
+              horizontal: 100.0,
+              vertical: 10.0,
+            ),
+            child: ElevatedButton(
               onPressed: () {
                 Navigator.push(
                   context,
@@ -163,10 +172,28 @@ class _HomePageState extends State<HomePage> {
                   ),
                 );
               },
-              child: Icon(FontAwesomeIcons.play),
-            )
-          ],
-        ),
+              style: ElevatedButton.styleFrom(
+                primary: kPrimaryColor,
+              ),
+              child: const Padding(
+                padding: EdgeInsets.all(10.0),
+                child: ListTile(
+                  leading: Icon(
+                    FontAwesomeIcons.play,
+                    color: kTextColor,
+                  ),
+                  title: Text(
+                    'Start',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: kTextColor,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ]),
       ),
     );
   }
