@@ -54,7 +54,13 @@ class _HomePageState extends State<HomePage> {
           Padding(
             padding: const EdgeInsets.all(10.0),
             child: DropdownButton2<IconData>(
-              items: <IconData>[Icons.exit_to_app].map((IconData value) {
+              buttonElevation: 0,
+              underline: Container(),
+              alignment: Alignment.center,
+              focusColor: Colors.transparent,
+              items: <IconData>[
+                FontAwesomeIcons.signOutAlt,
+              ].map((IconData value) {
                 return DropdownMenuItem<IconData>(
                   value: value,
                   alignment: Alignment.center,
@@ -151,9 +157,33 @@ class _HomePageState extends State<HomePage> {
                 ],
               ),
             ),
-            ElevatedButton(
-              onPressed: () {},
-              child: Icon(FontAwesomeIcons.play),
+            Padding(
+              padding: const EdgeInsets.symmetric(
+                horizontal: 100.0,
+                vertical: 10.0,
+              ),
+              child: ElevatedButton(
+                onPressed: () {},
+                style: ElevatedButton.styleFrom(
+                  primary: kPrimaryColor,
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.all(10.0),
+                  child: const ListTile(
+                    leading: Icon(
+                      FontAwesomeIcons.play,
+                      color: kTextColor,
+                    ),
+                    title: Text(
+                      'Start',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: kTextColor,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
             )
           ],
         ),

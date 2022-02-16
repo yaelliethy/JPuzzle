@@ -46,11 +46,19 @@ dependencies:
   flutter_svg: ^1.0.3
   expandable_widgets: ^1.0.2
   dropdown_button2: ^1.1.1
-  flutter_native_splash: ^2.0.2
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
+  flutter_native_splash: ^2.0.2
+
+flutter_native_splash:
+  android: true
+  ios: true
+  web: true
+
+  color: "#810034"
+  image: "assets/images/rocket.png"
 
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is
