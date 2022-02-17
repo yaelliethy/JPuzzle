@@ -29,8 +29,11 @@ class Base{
     int x=1, y=0;
     Direction direction=Direction.right;
     //For each tile
-    while(x<dimension-1 && y<dimension-1){
+    while(!(x>dimension || y>dimension)){
       int i=getIndex(x, y);
+      if(tiles[i].type == TileType.placeholder || tiles[i].type == TileType.target){
+        return false;
+      }
       if(tiles[i].type == TileType.horizontal) {
         //Check whether this tile is the first tile
         //If direction is up or down, return false
@@ -71,18 +74,18 @@ class Base{
           return false;
         }
         else{
-          if(direction == Direction.up){
-            y--;
+          if(direction == Direction.down){
+            y++;
           }
           else{
-            y++;
+            y--;
           }
         }
       }
       else if(tiles[i].type == TileType.rightUp) {
         if(direction == Direction.left || direction == Direction.down){
           x--;
-          y--;
+          y++;
           direction=Direction.right;
         }
         else{
@@ -92,7 +95,7 @@ class Base{
       else if(tiles[i].type == TileType.rightDown) {
         if(direction == Direction.left || direction == Direction.up){
           x--;
-          y--;
+          y++;
           direction=Direction.left;
         }
         else{
