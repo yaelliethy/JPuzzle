@@ -23,13 +23,14 @@ class Base{
   }
   //Check if the puzzle is solved
   bool isSolved(List<Tile> tiles){
-    if(tiles[1].type != TileType.horizontal && tiles[1].type != TileType.leftUp && tiles[1].type != TileType.leftDown){
+    if(tiles[0].type != TileType.horizontal){
       return false;
     }
     int x=1, y=0;
     Direction direction=Direction.right;
     //For each tile
-    for(int i = 0; i < tiles.length; i++){
+    while(x<dimension-1 && y<dimension-1){
+      int i=getIndex(x, y);
       if(tiles[i].type == TileType.horizontal) {
         //Check whether this tile is the first tile
         //If direction is up or down, return false
@@ -48,6 +49,7 @@ class Base{
       else if(tiles[i].type == TileType.leftUp) {
         if(direction == Direction.right || direction == Direction.down){
           x++;
+          y--;
           direction=Direction.up;
         }
         else{
@@ -57,6 +59,7 @@ class Base{
       else if(tiles[i].type == TileType.leftDown) {
         if(direction == Direction.right || direction == Direction.up){
           x++;
+          y++;
           direction=Direction.down;
         }
         else{
@@ -69,16 +72,17 @@ class Base{
         }
         else{
           if(direction == Direction.up){
-            y++;
+            y--;
           }
           else{
-            y--;
+            y++;
           }
         }
       }
       else if(tiles[i].type == TileType.rightUp) {
         if(direction == Direction.left || direction == Direction.down){
-          y++;
+          x--;
+          y--;
           direction=Direction.right;
         }
         else{
@@ -87,7 +91,8 @@ class Base{
       }
       else if(tiles[i].type == TileType.rightDown) {
         if(direction == Direction.left || direction == Direction.up){
-          y++;
+          x--;
+          y--;
           direction=Direction.left;
         }
         else{
@@ -95,7 +100,7 @@ class Base{
         }
       }
     }
-    if(x==dimension && y==dimension){
+    if(x==dimension-1 && y==dimension-1){
       return true;
     }
     else{
@@ -204,7 +209,6 @@ class Base{
     Map<int, Tile> tilesMap = {};
     for(int i = 0; i < tiles.length; i++){
       tilesMap[tiles[i].gameIndex] = tiles[i];
-
     }
     List<Tile> finalTilesList = tilesMap.values.toList();
     for(int i = 0; i < tilesMap.values.toList().length; i++){

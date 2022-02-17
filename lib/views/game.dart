@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:jpuzzle/Base/Base.dart';
 import 'package:jpuzzle/Base/TileTypes.dart';
 import 'package:jpuzzle/models/Tile.dart';
@@ -25,6 +26,15 @@ class _GameScreenState extends State<GameScreen> {
       axes.add(null);
     }
     tiles=base.createPuzzle();
+    while (true){
+      tiles.shuffle();
+      for (int x=0; x<tiles.length;x++){
+        tiles[x].gameIndex=x;
+      }
+      if(base.isSolvable(tiles)){
+        break;
+      }
+    }
     tiles.add(Tile(index: (widget.dimension*widget.dimension)-1, type: TileType.target));
     calculateAxes();
     super.initState();
@@ -61,6 +71,9 @@ class _GameScreenState extends State<GameScreen> {
     //     tileInAllTilesY=allTiles.gameIndexOf(row);
     //     break;
     //   }
+    // }
+    // if(base.isSolved(tiles)){
+    //   print("Solved");
     // }
     if(targetInAllTilesY!=widget.dimension-1) {
       if(allTiles[targetInAllTilesY+1][targetInAllTilesX]==tiles[index]) {
@@ -102,7 +115,16 @@ class _GameScreenState extends State<GameScreen> {
 
               return DragTarget<Tile>(builder: (context, List<Tile?> candidateData, rejectedData) {
                 Widget newChild=Container(
-                  child: Base.getImageFromTileType(tiles[index].type),
+                  child: Builder(
+                    builder: (context) {
+                      return Stack(
+                        children: [
+                          tiles[index].gameIndex==widget.dimension*widget.dimension-1? SvgPicture.asset("assets/images/tiles/target.svg") : Container(),
+                          Base.getImageFromTileType(tiles[index].type),
+                        ],
+                      );
+                    },
+                  ),
                   color: Colors.transparent,
                   width: (100-(widget.dimension*5)),
                   height: (100-(widget.dimension*5)),
