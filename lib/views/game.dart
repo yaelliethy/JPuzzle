@@ -46,6 +46,12 @@ class _GameScreenState extends State<GameScreen> {
     }
   }
   void calculateAxes(){
+
+    base.isSolved(tiles).then((solved) {
+      if(solved){
+        Navigator.pop(context);
+      }
+    });
     calculateAllTiles();
     List<dynamic> emptyAxes=[];
     for (List<Tile> row in allTiles) {
@@ -119,11 +125,7 @@ class _GameScreenState extends State<GameScreen> {
                     builder: (context) {
                       return Stack(
                         children: [
-                          tiles[index].gameIndex==widget.dimension*widget.dimension-1? GestureDetector(onTap: (){
-                            if(base.isSolved(tiles)){
-                              print("Solved");
-                            }
-                          },child: SvgPicture.asset("assets/images/tiles/target.svg")) : Container(),
+                          tiles[index].gameIndex==widget.dimension*widget.dimension-1? SvgPicture.asset("assets/images/tiles/target.svg") : Container(),
                           Base.getImageFromTileType(tiles[index].type),
                         ],
                       );

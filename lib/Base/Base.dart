@@ -22,16 +22,18 @@ class Base{
     return inversions % 2 == 0;
   }
   //Check if the puzzle is solved
-  bool isSolved(List<Tile> tiles){
+  Future<bool> isSolved(List<Tile> tiles) async{
+    await Future.delayed(Duration(milliseconds: 10));
     if(tiles[0].type != TileType.horizontal){
       return false;
     }
-    int x=1, y=0;
+    int x=0, y=0;
     Direction direction=Direction.right;
     //For each tile
-    while(!(x>dimension || y>dimension)){
+    while(!(x>=dimension || y>=dimension)){
       int i=getIndex(x, y);
-      if(tiles[i].type == TileType.placeholder || tiles[i].type == TileType.target){
+      if(tiles[i].type == TileType.placeholder || (tiles[i].type == TileType.target && i != (dimension*dimension)-1)){
+        i=getIndex(x, y);
         return false;
       }
       if(tiles[i].type == TileType.horizontal) {
@@ -51,9 +53,9 @@ class Base{
       }
       else if(tiles[i].type == TileType.leftUp) {
         if(direction == Direction.right || direction == Direction.down){
-          x++;
-          y--;
-          direction=Direction.up;
+          x--;
+          //y++;
+          direction=Direction.left;
         }
         else{
           return false;
@@ -61,7 +63,7 @@ class Base{
       }
       else if(tiles[i].type == TileType.leftDown) {
         if(direction == Direction.right || direction == Direction.up){
-          x++;
+          //x++;
           y++;
           direction=Direction.down;
         }
@@ -84,8 +86,8 @@ class Base{
       }
       else if(tiles[i].type == TileType.rightUp) {
         if(direction == Direction.left || direction == Direction.down){
-          x--;
-          y++;
+          x++;
+          //y++;
           direction=Direction.right;
         }
         else{
@@ -94,21 +96,20 @@ class Base{
       }
       else if(tiles[i].type == TileType.rightDown) {
         if(direction == Direction.left || direction == Direction.up){
-          x--;
+          //x--;
           y++;
-          direction=Direction.left;
+          direction=Direction.down;
         }
         else{
           return false;
         }
       }
+      int xAndYIndex=getIndex(x, y);
+      if(x==dimension-1 && y==dimension-1 && (tiles[xAndYIndex].type == TileType.target)){
+        return true;
+      }
     }
-    if(x==dimension-1 && y==dimension-1){
-      return true;
-    }
-    else{
-      return false;
-    }
+    return false;
   }
   List<Tile> createPuzzle(){
     List<Tile> tiles = [];
