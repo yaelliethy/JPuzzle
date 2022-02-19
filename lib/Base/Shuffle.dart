@@ -76,7 +76,8 @@ class Shuffle{
         List<dynamic> possibleMoves = [];
         int targetIndex = (dimension * dimension) - 1;
         solution.add(targetIndex);
-        for (int repeat=0;repeat<random.nextInt(dimension*dimension)+3  ;repeat++) {
+        int repeat=0;
+        while ((repeat<dimension*dimension*dimension) || targetIndex!=(dimension*dimension)-1){
           possibleMoves.clear();
           allTiles.clear();
           for (int row = 0; row < dimension; row++) {
@@ -118,7 +119,7 @@ class Shuffle{
           }
           int randomIndex = random.nextInt(possibleMoves.length);
           dynamic move = possibleMoves[randomIndex];
-          while (move == null || solution.last==move) {
+          while (move == null || solution.last==move || (solution.length>2 && solution.sublist(solution.length-3, solution.length).contains(move))){
             randomIndex = random.nextInt(possibleMoves.length);
             move = possibleMoves[randomIndex];
           }
@@ -129,6 +130,7 @@ class Shuffle{
           tiles[targetIndex].gameIndex = targetIndex;
           targetIndex = move;
           solution.add(targetIndex);
+          repeat++;
         }
         return [tiles, solution, targetIndex];
     }

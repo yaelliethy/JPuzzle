@@ -13,72 +13,185 @@ class GameScreen extends StatefulWidget {
   @override
   _GameScreenState createState() => _GameScreenState();
 }
-class _GameScreenState extends State<GameScreen> {
+
+class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
   late Base base;
   late Shuffle shuffle;
   late List<Tile> tiles;
-  List<List<Tile>> allTiles=[];
-  int targetIndex=8;
-  List<dynamic> axes=[];
+  List<List<Tile>> allTiles = [];
+  int targetIndex = 8;
+  List<dynamic> axes = [];
+  List<int> solution = [];
+  List<int> originalSolution = [];
+  bool solving=false;
+  late AnimationController _controller;
+  late Tween<double> _animation;
   @override
   void initState() {
-    shuffle=Shuffle();
-    targetIndex=(widget.dimension*widget.dimension)-1;
-    base=Base(widget.dimension);
-    for (int i=0;i<widget.dimension*widget.dimension;i++){
+    shuffle = Shuffle();
+    _controller =
+        AnimationController(vsync: this, duration: Duration(milliseconds: 100));
+    _animation = Tween<double>(begin: 0, end: (100 - (widget.dimension * 5)));
+    targetIndex = (widget.dimension * widget.dimension) - 1;
+    base = Base(widget.dimension);
+    for (int i = 0; i < widget.dimension * widget.dimension; i++) {
       axes.add(null);
     }
-    tiles=base.createPuzzle();
-    tiles.add(Tile(index: (widget.dimension*widget.dimension)-1, type: TileType.target));
+    tiles = base.createPuzzle();
+    tiles.add(Tile(
+        index: (widget.dimension * widget.dimension) - 1,
+        type: TileType.target));
 
-    List<dynamic> shuffledTiles=shuffle.shuffleT(tiles, widget.dimension);
-    List<Tile> newTiles=shuffledTiles[0];
-    tiles=newTiles;
-    print(shuffledTiles[1]);
-    targetIndex=shuffledTiles[2];
-    while (false){
-      //tiles.shuffle();
-
-      // if(base.isSolvable(tiles)){
-      //   break;
-      // }
-    }
-    for (int x=0; x<tiles.length;x++){
-      tiles[x].gameIndex=x;
+    List<dynamic> shuffledTiles = shuffle.shuffleT(tiles, widget.dimension);
+    List<Tile> newTiles = shuffledTiles[0];
+    tiles = newTiles;
+    solution = shuffledTiles[1];
+    originalSolution = shuffledTiles[1];
+    targetIndex = shuffledTiles[2];
+    print(solution);
+    // while (true){
+    //   tiles.shuffle();
+    //
+    //   if(base.isSolvable(tiles)){
+    //     break;
+    //   }
+    // }
+    for (int x = 0; x < tiles.length; x++) {
+      tiles[x].gameIndex = x;
     }
     calculateAxes();
     super.initState();
   }
-  void calculateAllTiles(){
+  void calculateAllTiles() {
     allTiles.clear();
-    for (int row=0; row < widget.dimension; row++) {
-      allTiles.add(tiles.sublist(row*widget.dimension, (row*widget.dimension)+widget.dimension));
+    for (int row = 0; row < widget.dimension; row++) {
+      allTiles.add(tiles.sublist(
+          row * widget.dimension, (row * widget.dimension) + widget.dimension));
     }
   }
-  void calculateAxes(){
 
+  void calculateAxes() {
     base.isSolved(tiles).then((solved) {
-      if(solved){
-        Navigator.pop(context);
+      if (solved) {
+        //solution=[(widget.dimension*widget.dimension)-1];
+        //Navigator.pop(context);
       }
     });
     calculateAllTiles();
-    List<dynamic> emptyAxes=[];
+    List<dynamic> emptyAxes = [];
     for (List<Tile> row in allTiles) {
-      if(row.contains(tiles[targetIndex])) {
-        int targetInAllTilesX=row.indexOf(tiles[targetIndex]);
-        int targetInAllTilesY=allTiles.indexOf(row);
-        for(int i=0;i<widget.dimension*widget.dimension;i++){
+      if (row.contains(tiles[targetIndex])) {
+        int targetInAllTilesX = row.indexOf(tiles[targetIndex]);
+        int targetInAllTilesY = allTiles.indexOf(row);
+        for (int i = 0; i < widget.dimension * widget.dimension; i++) {
           emptyAxes.add(getAxis(i, targetInAllTilesX, targetInAllTilesY));
         }
         setState(() {
-          axes=emptyAxes;
+          axes = emptyAxes;
         });
         break;
       }
     }
   }
-  dynamic getAxis(int index, int targetInAllTilesX, int targetInAllTilesY){
+
+  Widget getSolvingGrid() {
+    return GridView.count(
+        crossAxisCount: widget.dimension,
+        children: List.generate(tiles.length, (index) {
+          Widget newChild = Container(
+            child: Builder(
+              builder: (context) {
+                return Stack(
+                  children: [
+                    tiles[index].gameIndex ==
+                            widget.dimension * widget.dimension - 1
+                        ? SvgPicture.asset("assets/images/tiles/target.svg")
+                        : Container(),
+                    Base.getImageFromTileType(tiles[index].type),
+                  ],
+                );
+              },
+            ),
+            color: Colors.transparent,
+            width: (100 - (widget.dimension * 5)),
+            height: (100 - (widget.dimension * 5)),
+          );
+          if(axes[index]==null || !(solution.length>1 && solution[solution.length-2]==index)){
+            return newChild;
+          }
+          return AnimatedBuilder(
+            builder: (BuildContext context, Widget? child) {
+              return Transform.translate(
+                offset: getOffset(_controller.value, index, solution.last),
+                child: child,
+              );
+            },
+            animation: _controller.drive(
+              _animation.chain(
+                CurveTween(
+                  curve: Curves.easeInOut,
+                ),
+              ),
+            ),
+            child: newChild,
+          );
+        }));
+  }
+  Offset getOffset(double animationValue, int index, int newTargetIndex){
+    double x=0;
+    double y=0;
+    if(axes[index]==Axis.horizontal){
+      x=index<newTargetIndex?animationValue:-animationValue;
+      y=0;
+    }
+    else{
+      y=index<newTargetIndex?animationValue:-animationValue;
+      x=0;
+    }
+    return Offset(x, y);
+  }
+  void solve(){
+    if(solving){
+      _controller.reset();
+      _controller.forward();
+      _controller.addStatusListener((status) {
+        if(status == AnimationStatus.completed) {
+          if(solution.length==1){
+            setState(() {
+              int move=solution.last;
+              Tile newTile = tiles[move];
+              tiles[move] = tiles[targetIndex];
+              tiles[targetIndex] = newTile;
+              tiles[newTile.gameIndex].gameIndex = tiles[targetIndex].gameIndex;
+              tiles[targetIndex].gameIndex = targetIndex;
+              targetIndex = move;
+              solution.removeLast();
+              calculateAxes();
+              _controller.reset();
+              _controller.forward();
+              solution=[(widget.dimension*widget.dimension)-1];
+            });
+          }
+          else{
+            setState(() {
+              int move=solution.last;
+              Tile newTile = tiles[move];
+              tiles[move] = tiles[targetIndex];
+              tiles[targetIndex] = newTile;
+              tiles[newTile.gameIndex].gameIndex = tiles[targetIndex].gameIndex;
+              tiles[targetIndex].gameIndex = targetIndex;
+              targetIndex = move;
+              solution.removeLast();
+              calculateAxes();
+            });
+            _controller.reset();
+            _controller.forward();
+          }
+        }
+      });
+    }
+  }
+  dynamic getAxis(int index, int targetInAllTilesX, int targetInAllTilesY) {
     // int tileInAllTilesX=0;
     // int tileInAllTilesY=0;
     // for (List<Tile> row in allTiles) {
@@ -91,28 +204,29 @@ class _GameScreenState extends State<GameScreen> {
     // if(base.isSolved(tiles)){
     //   print("Solved");
     // }
-    if(targetInAllTilesY!=widget.dimension-1) {
-      if(allTiles[targetInAllTilesY+1][targetInAllTilesX]==tiles[index]) {
+    if (targetInAllTilesY != widget.dimension - 1) {
+      if (allTiles[targetInAllTilesY + 1][targetInAllTilesX] == tiles[index]) {
         return Axis.vertical;
       }
     }
-    if(targetInAllTilesY!=0) {
-      if(allTiles[targetInAllTilesY-1][targetInAllTilesX]==tiles[index]) {
+    if (targetInAllTilesY != 0) {
+      if (allTiles[targetInAllTilesY - 1][targetInAllTilesX] == tiles[index]) {
         return Axis.vertical;
       }
     }
-    if(targetInAllTilesX!=widget.dimension-1) {
-      if(allTiles[targetInAllTilesY][targetInAllTilesX+1]==tiles[index]) {
+    if (targetInAllTilesX != widget.dimension - 1) {
+      if (allTiles[targetInAllTilesY][targetInAllTilesX + 1] == tiles[index]) {
         return Axis.horizontal;
       }
     }
-    if(targetInAllTilesX!=0) {
-      if(allTiles[targetInAllTilesY][targetInAllTilesX-1]==tiles[index]) {
+    if (targetInAllTilesX != 0) {
+      if (allTiles[targetInAllTilesY][targetInAllTilesX - 1] == tiles[index]) {
         return Axis.horizontal;
       }
     }
     return null;
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -120,59 +234,81 @@ class _GameScreenState extends State<GameScreen> {
         title: Text('Game'),
       ),
       body: Center(
-        child: Container(
-          width: (100-(widget.dimension*5))*widget.dimension.toDouble(),
-          height:(100-(widget.dimension*5))*widget.dimension.toDouble(),
-          child: GridView.count(
-            crossAxisCount: widget.dimension,
-            children: List.generate(tiles.length, (index) {
-              Tile tile = tiles[index];
-              Tile acceptedTile=tile;
-
-              return DragTarget<Tile>(builder: (context, List<Tile?> candidateData, rejectedData) {
-                Widget newChild=Container(
-                  child: Builder(
-                    builder: (context) {
-                      return Stack(
-                        children: [
-                          tiles[index].gameIndex==widget.dimension*widget.dimension-1? SvgPicture.asset("assets/images/tiles/target.svg") : Container(),
-                          Base.getImageFromTileType(tiles[index].type),
-                        ],
-                      );
-                    },
-                  ),
-                  color: Colors.transparent,
-                  width: (100-(widget.dimension*5)),
-                  height: (100-(widget.dimension*5)),
-                );
-                dynamic axis=axes[index];
-                if(tile.type==TileType.target || axis==null){
-                  return newChild;
-                }
-                else {
-                  return Draggable<Tile>(
-                    axis: axis,
-                    data: tiles[index],
-                    child: newChild,
-                    feedback: newChild,
-                    childWhenDragging: Container(),
-                  );
-                }
-              }, onWillAccept: (data) {
-                return tile.type==TileType.target;
-              }, onAccept: (data) {
+        child: Column(
+          children: [
+            TextButton(
+              child: Text('Solve'),
+              onPressed: () {
                 setState(() {
-                  acceptedTile = data;
-                  targetIndex=acceptedTile.gameIndex;
-                  tiles[acceptedTile.gameIndex] = tiles[index];
-                  tiles[index]=acceptedTile;
-                  tiles[acceptedTile.gameIndex].gameIndex = data.gameIndex;
-                  tiles[index].gameIndex = index;
-                  calculateAxes();
+                  solving = true;
                 });
-              },);
-            }),
-          ),
+                solve();
+              },
+            ),
+            Container(
+              width: (100 - (widget.dimension * 5)) * widget.dimension.toDouble(),
+              height: (100 - (widget.dimension * 5)) * widget.dimension.toDouble(),
+              child: solving==false?GridView.count(
+                crossAxisCount: widget.dimension,
+                children: List.generate(tiles.length, (index) {
+                  Tile tile = tiles[index];
+                  Tile acceptedTile = tile;
+
+                  return DragTarget<Tile>(
+                    builder: (context, List<Tile?> candidateData, rejectedData) {
+                      Widget newChild = Container(
+                        child: Builder(
+                          builder: (context) {
+                            return Stack(
+                              children: [
+                                tiles[index].gameIndex ==
+                                        widget.dimension * widget.dimension - 1
+                                    ? SvgPicture.asset(
+                                    "assets/images/tiles/target.svg")
+                                    : Container(),
+                                Base.getImageFromTileType(tiles[index].type),
+                              ],
+                            );
+                          },
+                        ),
+                        color: Colors.transparent,
+                        width: (100 - (widget.dimension * 5)),
+                        height: (100 - (widget.dimension * 5)),
+                      );
+                      dynamic axis = axes[index];
+                      if (tile.type == TileType.target || axis == null || solving==true) {
+                        return newChild;
+                      } else {
+                        return Draggable<Tile>(
+                          axis: axis,
+                          data: tiles[index],
+                          child: newChild,
+                          feedback: newChild,
+                          childWhenDragging: Container(),
+                        );
+                      }
+                    },
+                    onWillAccept: (data) {
+                      return tile.type == TileType.target;
+                    },
+                    onAccept: (data) {
+                      setState(() {
+                        acceptedTile = data;
+                        targetIndex = acceptedTile.gameIndex;
+                        tiles[acceptedTile.gameIndex] = tiles[index];
+                        tiles[index] = acceptedTile;
+                        tiles[acceptedTile.gameIndex].gameIndex = data.gameIndex;
+                        tiles[index].gameIndex = index;
+                        solution.add(targetIndex);
+                        print(solution);
+                        calculateAxes();
+                      });
+                    },
+                  );
+                }),
+              ):getSolvingGrid(),
+            ),
+          ],
         ),
       ),
     );
