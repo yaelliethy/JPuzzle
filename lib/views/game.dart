@@ -30,7 +30,7 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
   void initState() {
     shuffle = Shuffle();
     _controller =
-        AnimationController(vsync: this, duration: Duration(milliseconds: 100));
+        AnimationController(vsync: this, duration: Duration(milliseconds: 500));
     _animation = Tween<double>(begin: 0, end: (100 - (widget.dimension * 5)));
     targetIndex = (widget.dimension * widget.dimension) - 1;
     base = Base(widget.dimension);
@@ -61,6 +61,11 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
     }
     calculateAxes();
     super.initState();
+  }
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
   }
   void calculateAllTiles() {
     allTiles.clear();
@@ -127,11 +132,7 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
               );
             },
             animation: _controller.drive(
-              _animation.chain(
-                CurveTween(
-                  curve: Curves.easeInOut,
-                ),
-              ),
+              _animation
             ),
             child: newChild,
           );
@@ -152,6 +153,17 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
   }
   void solve(){
     if(solving){
+      setState(() {
+        int move=solution.last;
+        Tile newTile = tiles[move];
+        tiles[move] = tiles[targetIndex];
+        tiles[targetIndex] = newTile;
+        tiles[newTile.gameIndex].gameIndex = tiles[targetIndex].gameIndex;
+        tiles[targetIndex].gameIndex = targetIndex;
+        targetIndex = move;
+        solution.removeLast();
+        calculateAxes();
+      });
       _controller.reset();
       _controller.forward();
       _controller.addStatusListener((status) {
@@ -167,10 +179,10 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
               targetIndex = move;
               solution.removeLast();
               calculateAxes();
-              _controller.reset();
-              _controller.forward();
               solution=[(widget.dimension*widget.dimension)-1];
             });
+            _controller.reset();
+            _controller.forward();
           }
           else{
             setState(() {
@@ -294,12 +306,12 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
                     onAccept: (data) {
                       setState(() {
                         acceptedTile = data;
+                        solution.add(targetIndex);
                         targetIndex = acceptedTile.gameIndex;
                         tiles[acceptedTile.gameIndex] = tiles[index];
                         tiles[index] = acceptedTile;
                         tiles[acceptedTile.gameIndex].gameIndex = data.gameIndex;
                         tiles[index].gameIndex = index;
-                        solution.add(targetIndex);
                         print(solution);
                         calculateAxes();
                       });
