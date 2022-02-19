@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:jpuzzle/Base/Base.dart';
+import 'package:jpuzzle/Base/Shuffle.dart';
 import 'package:jpuzzle/Base/TileTypes.dart';
 import 'package:jpuzzle/models/Tile.dart';
 
@@ -14,28 +15,37 @@ class GameScreen extends StatefulWidget {
 }
 class _GameScreenState extends State<GameScreen> {
   late Base base;
+  late Shuffle shuffle;
   late List<Tile> tiles;
   List<List<Tile>> allTiles=[];
   int targetIndex=8;
   List<dynamic> axes=[];
   @override
   void initState() {
+    shuffle=Shuffle();
     targetIndex=(widget.dimension*widget.dimension)-1;
     base=Base(widget.dimension);
     for (int i=0;i<widget.dimension*widget.dimension;i++){
       axes.add(null);
     }
     tiles=base.createPuzzle();
-    while (true){
-      tiles.shuffle();
-      for (int x=0; x<tiles.length;x++){
-        tiles[x].gameIndex=x;
-      }
-      if(base.isSolvable(tiles)){
-        break;
-      }
-    }
     tiles.add(Tile(index: (widget.dimension*widget.dimension)-1, type: TileType.target));
+
+    List<dynamic> shuffledTiles=shuffle.shuffleT(tiles, widget.dimension);
+    List<Tile> newTiles=shuffledTiles[0];
+    tiles=newTiles;
+    print(shuffledTiles[1]);
+    targetIndex=shuffledTiles[2];
+    while (false){
+      //tiles.shuffle();
+
+      // if(base.isSolvable(tiles)){
+      //   break;
+      // }
+    }
+    for (int x=0; x<tiles.length;x++){
+      tiles[x].gameIndex=x;
+    }
     calculateAxes();
     super.initState();
   }

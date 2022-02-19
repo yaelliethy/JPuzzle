@@ -55,7 +55,12 @@ class Base{
         if(direction == Direction.right || direction == Direction.down){
           x--;
           //y++;
-          direction=Direction.left;
+          if(direction==Direction.left){
+            direction=Direction.up;
+          }
+          else{
+            direction=Direction.left;
+          }
         }
         else{
           return false;
@@ -88,7 +93,12 @@ class Base{
         if(direction == Direction.left || direction == Direction.down){
           x++;
           //y++;
-          direction=Direction.right;
+          if(direction==Direction.left){
+            direction=Direction.up;
+          }
+          else{
+            direction=Direction.right;
+          }
         }
         else{
           return false;
