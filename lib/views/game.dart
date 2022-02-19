@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:jpuzzle/Base/Base.dart';
 import 'package:jpuzzle/Base/Shuffle.dart';
 import 'package:jpuzzle/Base/TileTypes.dart';
+import 'package:jpuzzle/common/constants.dart';
 import 'package:jpuzzle/models/Tile.dart';
 
 class GameScreen extends StatefulWidget {
@@ -23,7 +25,9 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
   List<dynamic> axes = [];
   List<int> solution = [];
   List<int> originalSolution = [];
-  bool solving=false;
+  bool solving = false;
+  bool userSolved = false;
+  bool computerSolved = false;
   late AnimationController _controller;
   late Tween<double> _animation;
   @override
@@ -62,11 +66,13 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
     calculateAxes();
     super.initState();
   }
+
   @override
   void dispose() {
     _controller.dispose();
     super.dispose();
   }
+
   void calculateAllTiles() {
     allTiles.clear();
     for (int row = 0; row < widget.dimension; row++) {
@@ -77,9 +83,23 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
 
   void calculateAxes() {
     base.isSolved(tiles).then((solved) {
-      if (solved) {
-        //solution=[(widget.dimension*widget.dimension)-1];
-        //Navigator.pop(context);
+      if (solved && (computerSolved == false)) {
+        setState(() {
+          userSolved = true;
+          computerSolved = false;
+        });
+      }
+      if (solved && (computerSolved == true)) {
+        setState(() {
+          solving = false;
+          userSolved = false;
+          computerSolved = true;
+        });
+      }
+      if (solving) {
+        setState(() {
+          solving = false;
+        });
       }
     });
     calculateAllTiles();
@@ -121,7 +141,9 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
             width: (100 - (widget.dimension * 5)),
             height: (100 - (widget.dimension * 5)),
           );
-          if(axes[index]==null || !(solution.length>1 && solution[solution.length-2]==index)){
+          if (axes[index] == null ||
+              !(solution.length > 1 &&
+                  solution[solution.length - 2] == index)) {
             return newChild;
           }
           return AnimatedBuilder(
@@ -131,30 +153,29 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
                 child: child,
               );
             },
-            animation: _controller.drive(
-              _animation
-            ),
+            animation: _controller.drive(_animation),
             child: newChild,
           );
         }));
   }
-  Offset getOffset(double animationValue, int index, int newTargetIndex){
-    double x=0;
-    double y=0;
-    if(axes[index]==Axis.horizontal){
-      x=index<newTargetIndex?animationValue:-animationValue;
-      y=0;
-    }
-    else{
-      y=index<newTargetIndex?animationValue:-animationValue;
-      x=0;
+
+  Offset getOffset(double animationValue, int index, int newTargetIndex) {
+    double x = 0;
+    double y = 0;
+    if (axes[index] == Axis.horizontal) {
+      x = index < newTargetIndex ? animationValue : -animationValue;
+      y = 0;
+    } else {
+      y = index < newTargetIndex ? animationValue : -animationValue;
+      x = 0;
     }
     return Offset(x, y);
   }
-  void solve(){
-    if(solving){
+
+  void solve() {
+    if (solving) {
       setState(() {
-        int move=solution.last;
+        int move = solution.last;
         Tile newTile = tiles[move];
         tiles[move] = tiles[targetIndex];
         tiles[targetIndex] = newTile;
@@ -167,10 +188,10 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
       _controller.reset();
       _controller.forward();
       _controller.addStatusListener((status) {
-        if(status == AnimationStatus.completed) {
-          if(solution.length==1){
+        if (status == AnimationStatus.completed) {
+          if (solution.length == 1) {
             setState(() {
-              int move=solution.last;
+              int move = solution.last;
               Tile newTile = tiles[move];
               tiles[move] = tiles[targetIndex];
               tiles[targetIndex] = newTile;
@@ -179,14 +200,13 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
               targetIndex = move;
               solution.removeLast();
               calculateAxes();
-              solution=[(widget.dimension*widget.dimension)-1];
+              solution = [(widget.dimension * widget.dimension) - 1];
             });
             _controller.reset();
             _controller.forward();
-          }
-          else{
+          } else {
             setState(() {
-              int move=solution.last;
+              int move = solution.last;
               Tile newTile = tiles[move];
               tiles[move] = tiles[targetIndex];
               tiles[targetIndex] = newTile;
@@ -203,6 +223,7 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
       });
     }
   }
+
   dynamic getAxis(int index, int targetInAllTilesX, int targetInAllTilesY) {
     // int tileInAllTilesX=0;
     // int tileInAllTilesY=0;
@@ -248,78 +269,135 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
       body: Center(
         child: Column(
           children: [
-            TextButton(
-              child: Text('Solve'),
-              onPressed: () {
-                setState(() {
-                  solving = true;
-                });
-                solve();
-              },
-            ),
             Container(
-              width: (100 - (widget.dimension * 5)) * widget.dimension.toDouble(),
-              height: (100 - (widget.dimension * 5)) * widget.dimension.toDouble(),
-              child: solving==false?GridView.count(
-                crossAxisCount: widget.dimension,
-                children: List.generate(tiles.length, (index) {
-                  Tile tile = tiles[index];
-                  Tile acceptedTile = tile;
+              width:
+                  (100 - (widget.dimension * 5)) * widget.dimension.toDouble(),
+              height:
+                  (100 - (widget.dimension * 5)) * widget.dimension.toDouble(),
+              child: solving == false
+                  ? GridView.count(
+                      crossAxisCount: widget.dimension,
+                      children: List.generate(tiles.length, (index) {
+                        Tile tile = tiles[index];
+                        Tile acceptedTile = tile;
 
-                  return DragTarget<Tile>(
-                    builder: (context, List<Tile?> candidateData, rejectedData) {
-                      Widget newChild = Container(
-                        child: Builder(
-                          builder: (context) {
-                            return Stack(
-                              children: [
-                                tiles[index].gameIndex ==
-                                        widget.dimension * widget.dimension - 1
-                                    ? SvgPicture.asset(
-                                    "assets/images/tiles/target.svg")
-                                    : Container(),
-                                Base.getImageFromTileType(tiles[index].type),
-                              ],
+                        return DragTarget<Tile>(
+                          builder: (context, List<Tile?> candidateData,
+                              rejectedData) {
+                            Widget newChild = Container(
+                              child: Builder(
+                                builder: (context) {
+                                  return Stack(
+                                    children: [
+                                      tiles[index].gameIndex ==
+                                              widget.dimension *
+                                                      widget.dimension -
+                                                  1
+                                          ? SvgPicture.asset(
+                                              "assets/images/tiles/target.svg")
+                                          : Container(),
+                                      Base.getImageFromTileType(
+                                          tiles[index].type),
+                                    ],
+                                  );
+                                },
+                              ),
+                              color: Colors.transparent,
+                              width: (100 - (widget.dimension * 5)),
+                              height: (100 - (widget.dimension * 5)),
                             );
+                            dynamic axis = axes[index];
+                            if (tile.type == TileType.target ||
+                                axis == null ||
+                                computerSolved == true ||
+                                solving == true ||
+                                userSolved == true) {
+                              return newChild;
+                            } else {
+                              return Draggable<Tile>(
+                                axis: axis,
+                                data: tiles[index],
+                                child: newChild,
+                                feedback: newChild,
+                                childWhenDragging: Container(),
+                              );
+                            }
                           },
-                        ),
-                        color: Colors.transparent,
-                        width: (100 - (widget.dimension * 5)),
-                        height: (100 - (widget.dimension * 5)),
-                      );
-                      dynamic axis = axes[index];
-                      if (tile.type == TileType.target || axis == null || solving==true) {
-                        return newChild;
-                      } else {
-                        return Draggable<Tile>(
-                          axis: axis,
-                          data: tiles[index],
-                          child: newChild,
-                          feedback: newChild,
-                          childWhenDragging: Container(),
+                          onWillAccept: (data) {
+                            return tile.type == TileType.target;
+                          },
+                          onAccept: (data) {
+                            setState(() {
+                              acceptedTile = data;
+                              solution.add(targetIndex);
+                              targetIndex = acceptedTile.gameIndex;
+                              tiles[acceptedTile.gameIndex] = tiles[index];
+                              tiles[index] = acceptedTile;
+                              tiles[acceptedTile.gameIndex].gameIndex =
+                                  data.gameIndex;
+                              tiles[index].gameIndex = index;
+                              print(solution);
+                              calculateAxes();
+                            });
+                          },
                         );
-                      }
-                    },
-                    onWillAccept: (data) {
-                      return tile.type == TileType.target;
-                    },
-                    onAccept: (data) {
-                      setState(() {
-                        acceptedTile = data;
-                        solution.add(targetIndex);
-                        targetIndex = acceptedTile.gameIndex;
-                        tiles[acceptedTile.gameIndex] = tiles[index];
-                        tiles[index] = acceptedTile;
-                        tiles[acceptedTile.gameIndex].gameIndex = data.gameIndex;
-                        tiles[index].gameIndex = index;
-                        print(solution);
-                        calculateAxes();
-                      });
-                    },
-                  );
-                }),
-              ):getSolvingGrid(),
+                      }),
+                    )
+                  : getSolvingGrid(),
             ),
+            SizedBox(
+              height: 10,
+            ),
+            computerSolved
+                ? ElevatedButton(
+                    child: Text('Go home'),
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                    style: ElevatedButton.styleFrom(
+                      primary: kPrimaryColor,
+                    ),
+                  )
+                : (userSolved
+                    ? Column(
+                      children: [
+                        RichText(
+                            text: TextSpan(
+                              style: GoogleFonts.poppins(
+                                fontSize: 30.0,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.yellow,
+                              ),
+                              children: [
+                                const TextSpan(text: 'You solved it!'),
+                              ],
+                            ),
+                          ),
+                        ElevatedButton(
+                          child: Text('Go home'),
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                          },
+                          style: ElevatedButton.styleFrom(
+                            primary: kPrimaryColor,
+                          ),
+                        )
+                      ],
+                    )
+                    : ElevatedButton(
+                        child: Text('Solve'),
+                        onPressed: () {
+                          setState(() {
+                            userSolved = false;
+                            computerSolved = true;
+                            solving = true;
+                          });
+                          solve();
+                        },
+                        style: ElevatedButton.styleFrom(
+                          primary: kPrimaryColor,
+                        ),
+                      )),
           ],
         ),
       ),
