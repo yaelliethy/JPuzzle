@@ -4,16 +4,16 @@ class User {
   String highScoreDate;
   int highScoreTime;
   int highScoreDimension;
-  String token;
-  User({required this.highScore, required this.highScoreDate, required this.highScoreTime, required this.highScoreDimension, required this.token});
+  String email;
+  User({required this.highScore, required this.highScoreDate, required this.highScoreTime, required this.highScoreDimension, required this.email});
 
-  factory User.fromJson(Map<String, dynamic> json, String token) {
+  factory User.fromJson(Map<String, dynamic> json) {
     return User(
       highScore: json['highScore'],
       highScoreDate: json['highScoreDate'],
       highScoreTime: json['highScoreTime'],
       highScoreDimension: json['highScoreDimension'],
-      token: token,
+      email: json['email'],
     );
   }
 
@@ -23,7 +23,7 @@ class User {
     data['highScoreDate'] = highScoreDate;
     data['highScoreTime'] = highScoreTime;
     data['highScoreDimension'] = highScoreDimension;
-    data['token'] = token;
+    data['email'] = email;
     return data;
   }
 }

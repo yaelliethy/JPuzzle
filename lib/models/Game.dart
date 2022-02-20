@@ -1,11 +1,15 @@
 //Game model with time, dimension and score
+import 'package:jpuzzle/models/Tile.dart';
+
 class Game {
   final int id;
   final int time;
   final int dimension;
   final int score;
   final String date;
-  Game({required this.id, required this.time, required this.dimension, required this.score, required this.date});
+  final List<int> tiles;
+  final List<int> userSolution;
+  Game({required this.id, required this.time, required this.dimension, required this.score, required this.date, required this.tiles, required this.userSolution});
 
   factory Game.fromJson(
     Map<String, dynamic> json,
@@ -15,7 +19,9 @@ class Game {
       time: json['time'],
       dimension: json['dimension'],
       score: json['score'],
-      date: json['date']
+      date: json['date'],
+      tiles: json['tiles'],
+      userSolution: json['userSolution']
     );
   }
   Map<String, dynamic> toJson() => {
@@ -23,6 +29,8 @@ class Game {
     'time': time,
     'dimension': dimension,
     'score': score,
-    'date': date
+    'date': date,
+    'tiles': tiles,
+    'userSolution': userSolution
   };
 }

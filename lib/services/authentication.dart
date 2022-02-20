@@ -39,7 +39,7 @@ class Authentication extends ChangeNotifier {
 
       notifyListeners();
     }
-    currentUser=await _firestoreProvider.addUser(userCredential.user!.displayName!, (await userCredential.user?.getIdToken())!);
+    currentUser=await _firestoreProvider.addUser(userCredential.user!.displayName!, (await userCredential.user?.email)!);
   }
   Future <void> signOut()  async {
     await FirebaseAuth.instance.signOut();
