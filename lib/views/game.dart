@@ -469,7 +469,7 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
         date: formatted,
         score: score,
         dimension: widget.dimension,
-        tiles: Shuffle.getGeneratedTiles(tiles),
+        tiles: Shuffle.getGeneratedTiles(originalTiles),
         time: time,
         userSolution: solution.sublist((solution.length-originalSolution.length)+1)
       );
