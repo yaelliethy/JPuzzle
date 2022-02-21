@@ -5,9 +5,10 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:jpuzzle/common/constants.dart';
-import 'package:provider/provider.dart';
-import 'package:jpuzzle/widgets/custom_dropdown.dart';
+import 'package:jpuzzle/services/authentication.dart';
 import 'package:jpuzzle/views/game.dart';
+import 'package:jpuzzle/widgets/widgets.dart';
+import 'package:provider/provider.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -37,16 +38,12 @@ class _HomePageState extends State<HomePage> {
       appBar: AppBar(
         flexibleSpace: SvgPicture.asset(
           'assets/images/backgrounds/Kander.svg',
-          fit: BoxFit.cover,
+          fit: BoxFit.fitWidth,
         ),
         toolbarHeight: size.height * 0.1,
-        title: const Text(
+        title: Text(
           'Home',
-          style: TextStyle(
-            fontSize: 24.0,
-            fontWeight: FontWeight.bold,
-            color: Colors.black,
-          ),
+          style: kHeaderStyle,
         ),
         centerTitle: true,
         backgroundColor: kBackgroundColor,
@@ -71,7 +68,11 @@ class _HomePageState extends State<HomePage> {
                   ),
                 );
               }).toList(),
-              onChanged: (_) {},
+              onChanged: (_) async {
+                print('Nice');
+                final provider = context.read<Authentication>();
+                await provider.signOut();
+              },
               hint: CircleAvatar(
                 backgroundImage: NetworkImage(
                   user.photoURL!,
@@ -100,7 +101,13 @@ class _HomePageState extends State<HomePage> {
                 TextSpan(
                   text: user.displayName,
                   style: const TextStyle(
-                    color: kTextColor,
+                    color: kAccentColor,
+                    shadows: [
+                      BoxShadow(
+                        spreadRadius: 5.0,
+                        offset: Offset(4.0, 4.0),
+                      ),
+                    ],
                   ),
                 ),
               ],
@@ -122,7 +129,7 @@ class _HomePageState extends State<HomePage> {
                 Text(
                   '${_dimensions.toInt().toString()} × ${_dimensions.toInt().toString()}',
                   style: const TextStyle(
-                    color: kTextColor,
+                    color: kAccentColor,
                     fontWeight: FontWeight.bold,
                     fontSize: 18.0,
                   ),
@@ -142,6 +149,9 @@ class _HomePageState extends State<HomePage> {
                       _dimensions = value.roundToDouble();
                     });
                   },
+                  thumbColor: kAccentColor,
+                  activeColor: kPrimaryColor,
+                  inactiveColor: kPrimaryColor.withOpacity(0.3),
                 ),
                 AnimatedSwitcher(
                   duration: const Duration(milliseconds: 300),
@@ -161,8 +171,11 @@ class _HomePageState extends State<HomePage> {
               horizontal: 100.0,
               vertical: 10.0,
             ),
-            child: ElevatedButton(
-              onPressed: () {
+            child: RoundedButton(
+              dimensions: _dimensions,
+              text: 'Start',
+              icon: FontAwesomeIcons.play,
+              onTap: () {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
@@ -172,25 +185,6 @@ class _HomePageState extends State<HomePage> {
                   ),
                 );
               },
-              style: ElevatedButton.styleFrom(
-                primary: kPrimaryColor,
-              ),
-              child: const Padding(
-                padding: EdgeInsets.all(10.0),
-                child: ListTile(
-                  leading: Icon(
-                    FontAwesomeIcons.play,
-                    color: kTextColor,
-                  ),
-                  title: Text(
-                    'Start',
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      color: kTextColor,
-                    ),
-                  ),
-                ),
-              ),
             ),
           ),
         ]),
@@ -198,3 +192,5 @@ class _HomePageState extends State<HomePage> {
     );
   }
 }
+
+
