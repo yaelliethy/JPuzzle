@@ -29,6 +29,7 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
   List<dynamic> axes = [];
   List<int> solution = [];
   List<int> originalSolution = [];
+  List<int> userMoves=[];
   List<Tile> originalTiles = [];
   bool solving = false;
   bool userSolved = false;
@@ -61,9 +62,9 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
     while(true) {
       List<dynamic> shuffledTiles = shuffle.shuffle(tiles, widget.dimension);
       tiles = shuffledTiles[0];
-      originalTiles = List.from(tiles);
+      originalTiles = List.from(shuffledTiles[0]);
       solution = shuffledTiles[1];
-      originalSolution = List.from(solution);
+      originalSolution = List.from(shuffledTiles[1]);
       targetIndex = shuffledTiles[2];
       if(base.isSolvable(tiles)){
         break;
@@ -91,17 +92,17 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
   }
 
   Future<void> scoreBoard() async {
-    while (true) {
-      if (userSolved || computerSolved) {
-        break;
-      }
+    while (!(userSolved || computerSolved)) {
       await Future.delayed(Duration(seconds: 1));
-      setState(() {
-        time++;
-        score =
-            ((((widget.dimension ^ 2) * originalSolution.length) / time) * 100)
-                .toInt();
-      });
+      if(!(userSolved || computerSolved)) {
+        setState(() {
+          time++;
+          score =
+              ((((widget.dimension ^ 2) * originalSolution.length) / time) *
+                  100)
+                  .toInt();
+        });
+      }
     }
   }
 
@@ -395,6 +396,7 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
                                 tiles[acceptedTile.gameIndex].gameIndex =
                                     data.gameIndex;
                                 tiles[index].gameIndex = index;
+                                userMoves.add(targetIndex);
                                 calculateAxes();
                               });
                             },
@@ -517,7 +519,7 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
     );
   }
 
-  void goHome(BuildContext context) {
+  void goHome(BuildContext context) async {
     if (userSolved) {
       final DateTime now = DateTime.now();
       final DateFormat formatter = DateFormat('yyyy-MM-dd');
@@ -527,12 +529,11 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
           date: formatted,
           score: score,
           dimension: widget.dimension,
-          tiles: Shuffle.getGeneratedTiles(originalTiles),
+          tiles: originalTiles,
           time: time,
-          userSolution: solution
-              .sublist((solution.length - originalSolution.length), solution.length));
-      firestoreProvider.addGame(FirebaseAuth.instance.currentUser!.email!, game);
+          userSolution: userMoves.reversed.toList());
+      await firestoreProvider.addGame(FirebaseAuth.instance.currentUser!.email!, game);
     }
-    //Navigator.of(context).pop();
+    Navigator.of(context).pop();
   }
 }

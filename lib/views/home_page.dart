@@ -7,6 +7,8 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:jpuzzle/common/constants.dart';
 import 'package:jpuzzle/services/authentication.dart';
 import 'package:jpuzzle/views/game.dart';
+import 'package:jpuzzle/views/game_history.dart';
+import 'package:jpuzzle/views/game_history_item.dart';
 import 'package:jpuzzle/widgets/widgets.dart';
 import 'package:provider/provider.dart';
 
@@ -171,20 +173,38 @@ class _HomePageState extends State<HomePage> {
               horizontal: 100.0,
               vertical: 10.0,
             ),
-            child: RoundedButton(
-              dimensions: _dimensions,
-              text: 'Start',
-              icon: FontAwesomeIcons.play,
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => GameScreen(
-                      dimension: _dimensions.toInt(),
-                    ),
-                  ),
-                );
-              },
+            child: Column(
+              children: [
+                RoundedButton(
+                  dimensions: _dimensions,
+                  text: 'Start',
+                  icon: FontAwesomeIcons.play,
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => GameScreen(
+                          dimension: _dimensions.toInt(),
+                        ),
+                      ),
+                    );
+                  },
+                ),
+                SizedBox(height: 10,),
+                RoundedButton(
+                  dimensions: _dimensions,
+                  text: 'History',
+                  icon: FontAwesomeIcons.play,
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => GameHistory(),
+                      ),
+                    );
+                  },
+                ),
+              ],
             ),
           ),
         ]),

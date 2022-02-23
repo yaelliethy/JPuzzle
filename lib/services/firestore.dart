@@ -49,4 +49,13 @@ class FirestoreProvider {
     }
     await _users.doc(user.email).update({"Games": FieldValue.arrayUnion([game.toJson()])});
   }
+  Future<List<Game>> getGames(String email) async{
+    Map<String, dynamic> data = (await _users.doc(email).get()).data() as Map<String, dynamic>;
+    List<dynamic> games=data['Games'];
+    List<Game> gameList=[];
+    for (Map<String, dynamic> game in games){
+      gameList.add(Game.fromJson(game));
+    }
+    return gameList;
+  }
 }
