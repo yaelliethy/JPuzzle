@@ -194,7 +194,7 @@ class _HomePageState extends State<HomePage> {
                 RoundedButton(
                   dimensions: _dimensions,
                   text: 'History',
-                  icon: FontAwesomeIcons.play,
+                  icon: FontAwesomeIcons.history,
                   onTap: () {
                     Navigator.push(
                       context,

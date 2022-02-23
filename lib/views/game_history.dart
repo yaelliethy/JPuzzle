@@ -27,6 +27,9 @@ class _GameHistoryState extends State<GameHistory> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: Text('History'),
+      ),
       body: FutureBuilder(
         future: gamesFuture,
         builder: (context, snapshot) {
@@ -51,10 +54,10 @@ class _GameHistoryState extends State<GameHistory> {
               ),
             );
           }
-          return Container(
-            color: Colors.yellow,
-            height: 50,
-            width: 50,
+          return Center(
+            child: CircularProgressIndicator(
+              color: Colors.yellow,
+            ),
           );
         },
       ),

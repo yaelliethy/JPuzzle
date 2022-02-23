@@ -11,6 +11,7 @@ import 'package:jpuzzle/common/constants.dart';
 import 'package:jpuzzle/models/Game.dart';
 import 'package:jpuzzle/models/Tile.dart';
 import 'package:jpuzzle/services/firestore.dart';
+import 'package:loader_overlay/loader_overlay.dart';
 
 class GameScreen extends StatefulWidget {
   final int dimension;
@@ -325,194 +326,214 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
       appBar: AppBar(
         title: Text('Game'),
       ),
-      body: Center(
-        child: SingleChildScrollView(
-          child: Column(
-            children: [
-              Container(
-                width: (100 - (widget.dimension * 5)) *
-                    widget.dimension.toDouble(),
-                height: (100 - (widget.dimension * 5)) *
-                    widget.dimension.toDouble(),
-                child: solving == false
-                    ? GridView.count(
-                        crossAxisCount: widget.dimension,
-                        children: List.generate(tiles.length, (index) {
-                          Tile tile = tiles[index];
-                          Tile acceptedTile = tile;
+      body: LoaderOverlay(
+        overlayWidget: Center(
+          child: CircularProgressIndicator(
+            color: Colors.yellow,
+          ),
+        ),
+        overlayOpacity: 0.7,
+        overlayColor: Colors.black,
+        useDefaultLoading: false,
+        child: Center(
+          child: SingleChildScrollView(
+            child: Column(
+              children: [
+                Container(
+                  width: (100 - (widget.dimension * 5)) *
+                      widget.dimension.toDouble(),
+                  height: (100 - (widget.dimension * 5)) *
+                      widget.dimension.toDouble(),
+                  child: solving == false
+                      ? GridView.count(
+                          crossAxisCount: widget.dimension,
+                          children: List.generate(tiles.length, (index) {
+                            Tile tile = tiles[index];
+                            Tile acceptedTile = tile;
 
-                          return DragTarget<Tile>(
-                            builder: (context, List<Tile?> candidateData,
-                                rejectedData) {
-                              Widget newChild = Container(
-                                child: Builder(
-                                  builder: (context) {
-                                    return Stack(
-                                      children: [
-                                        tiles[index].gameIndex ==
-                                                widget.dimension *
-                                                        widget.dimension -
-                                                    1
-                                            ? SvgPicture.asset(
-                                                "assets/images/tiles/target.svg")
-                                            : Container(),
-                                        Base.getImageFromTileType(
-                                            tiles[index].type),
-                                      ],
-                                    );
-                                  },
-                                ),
-                                color: Colors.transparent,
-                                width: (100 - (widget.dimension * 5)),
-                                height: (100 - (widget.dimension * 5)),
-                              );
-                              dynamic axis = axes[index];
-                              if (tile.type == TileType.target ||
-                                  axis == null ||
-                                  computerSolved == true ||
-                                  solving == true ||
-                                  userSolved == true) {
-                                return newChild;
-                              } else {
-                                return Draggable<Tile>(
-                                  axis: axis,
-                                  data: tiles[index],
-                                  child: newChild,
-                                  feedback: newChild,
-                                  childWhenDragging: Container(),
+                            return DragTarget<Tile>(
+                              builder: (context, List<Tile?> candidateData,
+                                  rejectedData) {
+                                Widget newChild = Container(
+                                  child: Builder(
+                                    builder: (context) {
+                                      return Stack(
+                                        children: [
+                                          tiles[index].gameIndex ==
+                                                  widget.dimension *
+                                                          widget.dimension -
+                                                      1
+                                              ? SvgPicture.asset(
+                                                  "assets/images/tiles/target.svg")
+                                              : Container(),
+                                          Base.getImageFromTileType(
+                                              tiles[index].type),
+                                        ],
+                                      );
+                                    },
+                                  ),
+                                  color: Colors.transparent,
+                                  width: (100 - (widget.dimension * 5)),
+                                  height: (100 - (widget.dimension * 5)),
                                 );
-                              }
-                            },
-                            onWillAccept: (data) {
-                              return tile.type == TileType.target;
-                            },
-                            onAccept: (data) {
-                              setState(() {
-                                acceptedTile = data;
-                                solution.add(targetIndex);
-                                targetIndex = acceptedTile.gameIndex;
-                                tiles[acceptedTile.gameIndex] = tiles[index];
-                                tiles[index] = acceptedTile;
-                                tiles[acceptedTile.gameIndex].gameIndex =
-                                    data.gameIndex;
-                                tiles[index].gameIndex = index;
-                                userMoves.add(targetIndex);
-                                calculateAxes();
-                              });
-                            },
-                          );
-                        }),
-                      )
-                    : getSolvingGrid(),
-              ),
-              SizedBox(
-                height: 10,
-              ),
-              computerSolved
-                  ? GestureDetector(
-                      onTap: () {
-                        togglePlay();
-                      },
-                      child: Column(
-                        children: [
-                          !doneSolving?AnimatedIcon(
-                            icon: AnimatedIcons.pause_play,
-                            progress: _playPauseController,
-                            size: 100,
-                            color: Colors.white,
-                          ):Container() ,
-                          ElevatedButton(
-                            child: Text('Go home'),
-                            onPressed: () {
-                              Navigator.of(context).pop();
-                            },
-                            style: ElevatedButton.styleFrom(
-                              primary: kPrimaryColor,
-                            ),
-                          )
-                        ],
-                      ),
-                    )
-                  : (userSolved
-                      ? Column(
+                                dynamic axis = axes[index];
+                                if (tile.type == TileType.target ||
+                                    axis == null ||
+                                    computerSolved == true ||
+                                    solving == true ||
+                                    userSolved == true) {
+                                  return newChild;
+                                } else {
+                                  return Draggable<Tile>(
+                                    axis: axis,
+                                    data: tiles[index],
+                                    child: newChild,
+                                    feedback: newChild,
+                                    childWhenDragging: Container(),
+                                  );
+                                }
+                              },
+                              onWillAccept: (data) {
+                                return tile.type == TileType.target;
+                              },
+                              onAccept: (data) {
+                                setState(() {
+                                  acceptedTile = data;
+                                  solution.add(targetIndex);
+                                  targetIndex = acceptedTile.gameIndex;
+                                  tiles[acceptedTile.gameIndex] = tiles[index];
+                                  tiles[index] = acceptedTile;
+                                  tiles[acceptedTile.gameIndex].gameIndex =
+                                      data.gameIndex;
+                                  tiles[index].gameIndex = index;
+                                  userMoves.add(targetIndex);
+                                  calculateAxes();
+                                });
+                              },
+                            );
+                          }),
+                        )
+                      : getSolvingGrid(),
+                ),
+                SizedBox(
+                  height: 10,
+                ),
+                computerSolved
+                    ? GestureDetector(
+                        onTap: () {
+                          togglePlay();
+                        },
+                        child: Column(
                           children: [
-                            RichText(
-                              text: TextSpan(
-                                style: GoogleFonts.poppins(
-                                  fontSize: 30.0,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.yellow,
-                                ),
-                                children: [
-                                  const TextSpan(text: 'You solved it!'),
-                                  TextSpan(text: "Your score is: $score")
-                                ],
-                              ),
-                            ),
+                            !doneSolving?AnimatedIcon(
+                              icon: AnimatedIcons.pause_play,
+                              progress: _playPauseController,
+                              size: 100,
+                              color: Colors.white,
+                            ):Container() ,
                             ElevatedButton(
                               child: Text('Go home'),
                               onPressed: () {
-                                goHome(context);
+                                Navigator.of(context).pop();
                               },
                               style: ElevatedButton.styleFrom(
                                 primary: kPrimaryColor,
                               ),
                             )
                           ],
-                        )
-                      : Column(
-                          children: [
-                            ElevatedButton(
-                              child: Text('Solve'),
-                              onPressed: () {
-                                //Alert user that his game won't be stored
-                                showDialog(
-                                  context: context,
-                                  builder: (BuildContext context) {
-                                    return AlertDialog(
-                                      title: Text('Solve'),
-                                      content: Text(
-                                          'Are you sure you want to the computer to ssolve this game? This will not be stored.'),
-                                      actions: <Widget>[
-                                        TextButton(
-                                          child: Text('Cancel'),
-                                          onPressed: () {
-                                            Navigator.of(context).pop();
-                                          },
-                                        ),
-                                        TextButton(
-                                          child: Text('Solve'),
-                                          onPressed: () {
-                                            Navigator.of(context).pop();
-                                            setState(() {
-                                              userSolved = false;
-                                              computerSolved = true;
-                                              solving = true;
-                                            });
-                                            solve();
-                                          },
-                                        ),
-                                      ],
-                                    );
-                                  },
-                                );
-                              },
-                              style: ElevatedButton.styleFrom(
-                                primary: kPrimaryColor,
+                        ),
+                      )
+                    : (userSolved
+                        ? Column(
+                            children: [
+                              RichText(
+                                text: TextSpan(
+                                  style: GoogleFonts.poppins(
+                                    fontSize: 30.0,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.yellow,
+                                  ),
+                                  children: [
+                                    const TextSpan(text: 'You solved it!'),
+                                    TextSpan(text: "Your score is: $score")
+                                  ],
+                                ),
                               ),
-                            ),
-                            //Score
-                            Text(
-                              'Score: $score',
-                              style: GoogleFonts.poppins(
-                                fontSize: 30.0,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.yellow,
+                              ElevatedButton(
+                                child: Text('Go home'),
+                                onPressed: () {
+                                  goHome(context);
+                                },
+                                style: ElevatedButton.styleFrom(
+                                  primary: kPrimaryColor,
+                                ),
+                              )
+                            ],
+                          )
+                        : Column(
+                            children: [
+                              ElevatedButton(
+                                child: Text('Solve'),
+                                onPressed: () {
+                                  //Alert user that his game won't be stored
+                                  showDialog(
+                                    context: context,
+                                    builder: (BuildContext context) {
+                                      return AlertDialog(
+                                        title: Text('Solve'),
+                                        content: Text(
+                                            'Are you sure you want to the computer to ssolve this game? This will not be stored.'),
+                                        actions: <Widget>[
+                                          TextButton(
+                                            child: Text('Cancel'),
+                                            onPressed: () {
+                                              Navigator.of(context).pop();
+                                            },
+                                          ),
+                                          TextButton(
+                                            child: Text('Solve'),
+                                            onPressed: () {
+                                              Navigator.of(context).pop();
+                                              setState(() {
+                                                userSolved = false;
+                                                computerSolved = true;
+                                                solving = true;
+                                              });
+                                              solve();
+                                            },
+                                          ),
+                                        ],
+                                      );
+                                    },
+                                  );
+                                },
+                                style: ElevatedButton.styleFrom(
+                                  primary: kPrimaryColor,
+                                ),
                               ),
-                            ),
-                          ],
-                        )),
-            ],
+                              SizedBox(height: 10,),
+                              ElevatedButton(
+                                child: Text('Go home'),
+                                onPressed: () {
+                                  goHome(context);
+                                },
+                                style: ElevatedButton.styleFrom(
+                                  primary: kPrimaryColor,
+                                ),
+                              ),
+                              //Score
+                              Text(
+                                'Score: $score',
+                                style: GoogleFonts.poppins(
+                                  fontSize: 30.0,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.yellow,
+                                ),
+                              ),
+                            ],
+                          )),
+              ],
+            ),
           ),
         ),
       ),
@@ -532,7 +553,9 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
           tiles: originalTiles,
           time: time,
           userSolution: userMoves.reversed.toList());
+      context.loaderOverlay.show();
       await firestoreProvider.addGame(FirebaseAuth.instance.currentUser!.email!, game);
+      context.loaderOverlay.hide();
     }
     Navigator.of(context).pop();
   }
