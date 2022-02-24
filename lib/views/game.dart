@@ -5,6 +5,7 @@ import 'package:jpuzzle/Base/Base.dart';
 import 'package:jpuzzle/Base/TileTypes.dart';
 import 'package:jpuzzle/common/constants.dart';
 import 'package:jpuzzle/models/Tile.dart';
+import 'package:jpuzzle/views/leaderboard.dart';
 
 class GameScreen extends StatefulWidget {
   final int dimension;
@@ -54,8 +55,62 @@ class _GameScreenState extends State<GameScreen> {
 
   void calculateAxes() {
     base.isSolved(tiles).then((solved) {
-      if (solved) {
-        Navigator.pop(context);
+      if (!solved) {
+        showDialog(
+          context: context,
+          builder: (context) {
+            return AlertDialog(
+              backgroundColor: kBackgroundColor,
+              title: ListTile(
+                leading: Icon(FontAwesomeIcons.grinStars),
+                title: Text(
+                  'Congratulations!',
+                  style: TextStyle(
+                    fontSize: 14.0,
+                    color: kAccentColor,
+                  ),
+                ),
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  child: ListTile(
+                    leading: Icon(FontAwesomeIcons.home),
+                    title: Text(
+                      'Home',
+                      style: TextStyle(
+                        color: kPrimaryColor,
+                      ),
+                    ),
+                  ),
+                ),
+                TextButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) {
+                          return Leaderboard();
+                        },
+                      ),
+                    );
+                  },
+                  child: ListTile(
+                    leading: Icon(FontAwesomeIcons.trophy),
+                    title: Text(
+                      'Leaderboard',
+                      style: TextStyle(
+                        color: Color(0xFFFF4C29),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            );
+          },
+        );
       }
     });
     calculateAllTiles();
