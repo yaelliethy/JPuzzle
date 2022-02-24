@@ -14,6 +14,7 @@ class FirestoreProvider {
         'highScoreDate': '',
         'highScoreTime': 0,
         'highScoreDimension': 0,
+        'email': email,
         'Games':{}
       });
     }
@@ -36,7 +37,8 @@ class FirestoreProvider {
     return User.fromJson(data);
   }
   //Add game to user from a Game object
-  Future<void> addGame(User user, Game game) async {
+  Future<void> addGame(String email, Game game) async {
+    User user=await getUser(email);
     if(game.score>user.highScore) {
       await _users.doc(user.email).update({
         'highScore': game.score,
@@ -45,6 +47,15 @@ class FirestoreProvider {
         'highScoreDimension': game.dimension,
       });
     }
-    await _users.doc(user.email).collection("Games").add(game.toJson());
+    await _users.doc(user.email).update({"Games": FieldValue.arrayUnion([game.toJson()])});
+  }
+  Future<List<Game>> getGames(String email) async{
+    Map<String, dynamic> data = (await _users.doc(email).get()).data() as Map<String, dynamic>;
+    List<dynamic> games=data['Games'];
+    List<Game> gameList=[];
+    for (Map<String, dynamic> game in games){
+      gameList.add(Game.fromJson(game));
+    }
+    return gameList;
   }
 }
