@@ -10,6 +10,7 @@ import 'package:jpuzzle/views/game.dart';
 import 'package:jpuzzle/views/game_history.dart';
 import 'package:jpuzzle/views/game_history_item.dart';
 import 'package:jpuzzle/widgets/widgets.dart';
+import 'package:loader_overlay/loader_overlay.dart';
 import 'package:provider/provider.dart';
 
 class HomePage extends StatefulWidget {
@@ -182,8 +183,18 @@ class _HomePageState extends State<HomePage> {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => GameScreen(
-                          dimension: _dimensions.toInt(),
+                        builder: (context) => LoaderOverlay(
+                          overlayWidget: Center(
+                            child: CircularProgressIndicator(
+                              color: Colors.yellow,
+                            ),
+                          ),
+                          overlayOpacity: 0.7,
+                          overlayColor: Colors.black,
+                          useDefaultLoading: false,
+                          child: GameScreen(
+                            dimension: _dimensions.toInt(),
+                          ),
                         ),
                       ),
                     );
