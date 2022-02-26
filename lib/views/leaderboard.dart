@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:jpuzzle/widgets/future_list.dart';
-
 class Leaderboard extends StatelessWidget {
   const Leaderboard({
     Key? key,
@@ -20,9 +18,7 @@ class Leaderboard extends StatelessWidget {
           child: Expanded(
             child: FutureList(
               future: null,
-              widget: Container(
-                
-              ),
+              widget: Container(),
             ),
           ),
         ),

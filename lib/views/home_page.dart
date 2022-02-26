@@ -71,7 +71,6 @@ class _HomePageState extends State<HomePage> {
                 );
               }).toList(),
               onChanged: (_) async {
-                print('Nice');
                 final provider = context.read<Authentication>();
                 await provider.signOut();
               },

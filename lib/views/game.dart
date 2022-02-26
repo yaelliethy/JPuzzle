@@ -5,6 +5,7 @@ import 'package:jpuzzle/Base/Base.dart';
 import 'package:jpuzzle/Base/TileTypes.dart';
 import 'package:jpuzzle/common/constants.dart';
 import 'package:jpuzzle/models/Tile.dart';
+import 'package:jpuzzle/views/home_page.dart';
 import 'package:jpuzzle/views/leaderboard.dart';
 
 class GameScreen extends StatefulWidget {
@@ -55,7 +56,7 @@ class _GameScreenState extends State<GameScreen> {
 
   void calculateAxes() {
     base.isSolved(tiles).then((solved) {
-      if (!solved) {
+      if (solved) {
         showDialog(
           context: context,
           builder: (context) {
@@ -70,11 +71,23 @@ class _GameScreenState extends State<GameScreen> {
                     color: kAccentColor,
                   ),
                 ),
+                subtitle: Divider(
+                  endIndent: 50.0,
+                  indent: 50.0,
+                  thickness: 1.5,
+                ),
               ),
               actions: [
                 TextButton(
                   onPressed: () {
-                    Navigator.pop(context);
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) {
+                          return HomePage();
+                        },
+                      ),
+                    );
                   },
                   child: ListTile(
                     leading: Icon(FontAwesomeIcons.home),
