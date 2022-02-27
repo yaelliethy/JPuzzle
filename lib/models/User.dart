@@ -5,15 +5,19 @@ class User {
   int highScoreTime;
   int highScoreDimension;
   String email;
-  User({required this.highScore, required this.highScoreDate, required this.highScoreTime, required this.highScoreDimension, required this.email});
+  String profilePicUrl;
+  String name;
+  User({required this.highScore, required this.highScoreDate, required this.highScoreTime, required this.highScoreDimension, required this.email, required this.profilePicUrl, required this.name});
 
   factory User.fromJson(Map<String, dynamic> json) {
     return User(
+      name: json['name'],
       highScore: json['highScore'],
       highScoreDate: json['highScoreDate'],
       highScoreTime: json['highScoreTime'],
       highScoreDimension: json['highScoreDimension'],
       email: json['email'],
+      profilePicUrl: json['profilePicUrl'],
     );
   }
 
@@ -24,6 +28,8 @@ class User {
     data['highScoreTime'] = highScoreTime;
     data['highScoreDimension'] = highScoreDimension;
     data['email'] = email;
+    data['profilePicUrl'] = profilePicUrl;
+    data['name'] = name;
     return data;
   }
 }

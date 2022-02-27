@@ -254,37 +254,40 @@ class _GameHistoryItemState extends State<GameHistoryItem>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Builder(
-        builder: (context) {
-          Game game = games[widget.index];
-          // solution=game.userSolution;
-          // tiles=game.tiles;
-          return Center(
-            child: Column(
-              children: [
-                Container(
-                    width:
-                        (100 - (game.dimension * 5)) * game.dimension.toDouble(),
-                    height:
-                        (100 - (game.dimension * 5)) * game.dimension.toDouble(),
-                    child: getSolvingGrid(game.dimension)),
-                Container(
-                  child: GestureDetector(
-                    onTap: () {
-                      togglePlay(game.dimension);
-                    },
-                    child: AnimatedIcon(
-                      icon: AnimatedIcons.play_pause,
-                      progress: _playPauseController,
-                      size: 100,
-                      color: Colors.white,
+      body: Padding(
+        padding: const EdgeInsets.only(top: 8.0),
+        child: Builder(
+          builder: (context) {
+            Game game = games[widget.index];
+            // solution=game.userSolution;
+            // tiles=game.tiles;
+            return Center(
+              child: Column(
+                children: [
+                  Container(
+                      width:
+                          (100 - (game.dimension * 5)) * game.dimension.toDouble(),
+                      height:
+                          (100 - (game.dimension * 5)) * game.dimension.toDouble(),
+                      child: getSolvingGrid(game.dimension)),
+                  Container(
+                    child: GestureDetector(
+                      onTap: () {
+                        togglePlay(game.dimension);
+                      },
+                      child: AnimatedIcon(
+                        icon: AnimatedIcons.play_pause,
+                        progress: _playPauseController,
+                        size: 100,
+                        color: Colors.white,
+                      ),
                     ),
-                  ),
-                )
-              ],
-            ),
-          );
-        },
+                  )
+                ],
+              ),
+            );
+          },
+        ),
       ),
     );
   }

@@ -6,9 +6,11 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:jpuzzle/common/constants.dart';
 import 'package:jpuzzle/services/authentication.dart';
+import 'package:jpuzzle/services/firestore.dart';
 import 'package:jpuzzle/views/game.dart';
 import 'package:jpuzzle/views/game_history.dart';
 import 'package:jpuzzle/views/game_history_item.dart';
+import 'package:jpuzzle/views/leaderboard.dart';
 import 'package:jpuzzle/widgets/widgets.dart';
 import 'package:loader_overlay/loader_overlay.dart';
 import 'package:provider/provider.dart';
@@ -23,8 +25,15 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   double _dimensions = 3;
   late Widget _icon;
+  FirestoreProvider firestoreProvider=FirestoreProvider();
+  String highScore="";
   @override
   void initState() {
+    firestoreProvider.getUser(FirebaseAuth.instance.currentUser!.email!).then((value){
+      setState(() {
+        highScore=value.highScore.toString();
+      });
+    });
     _icon = SvgPicture.asset(
       emojis[3]!,
       key: const ValueKey<int>(3),
@@ -121,6 +130,12 @@ class _HomePageState extends State<HomePage> {
               color: Colors.white,
             ),
           ),
+          highScore!=""?Text(
+            'High score: ${highScore}',
+            style: TextStyle(
+              color: Colors.white,
+            ),
+          ):Container(),
           Padding(
             padding: const EdgeInsets.symmetric(
               horizontal: 100.0,
@@ -200,20 +215,71 @@ class _HomePageState extends State<HomePage> {
                     );
                   },
                 ),
-                SizedBox(height: 10,),
-                RoundedButton(
-                  dimensions: _dimensions,
-                  text: 'History',
-                  icon: FontAwesomeIcons.history,
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => GameHistory(),
-                      ),
-                    );
-                  },
+                SizedBox(
+                  height: 10,
                 ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    ElevatedButton(
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => GameHistory(),
+                          ),
+                        );
+                      },
+                      style: ElevatedButton.styleFrom(
+                        primary: kPrimaryColor,
+                        shape: RoundedRectangleBorder(
+                          side: BorderSide(
+                            width: 5.0,
+                          ),
+                          borderRadius: BorderRadius.circular(10.0),
+                        ),
+                        elevation: 10.0,
+                      ),
+                      child: Padding(
+                        padding: EdgeInsets.only(top:10.0, bottom: 10.0, left: 20.0, right: 20.0),
+                        child: Icon(
+                          FontAwesomeIcons.history,
+                          color: kBackgroundColor,
+                        ),
+                      ),
+                    ),
+                    SizedBox(
+                      width: 10,
+                    ),
+                    ElevatedButton(
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => Leaderboard(),
+                          ),
+                        );
+                      },
+                      style: ElevatedButton.styleFrom(
+                        primary: kPrimaryColor,
+                        shape: RoundedRectangleBorder(
+                          side: BorderSide(
+                            width: 5.0,
+                          ),
+                          borderRadius: BorderRadius.circular(10.0),
+                        ),
+                        elevation: 10.0,
+                      ),
+                      child: Padding(
+                        padding: EdgeInsets.only(top:10.0, bottom: 10.0, left: 20.0, right: 20.0),
+                        child: Icon(
+                          FontAwesomeIcons.trophy,
+                          color: kBackgroundColor,
+                        ),
+                      ),
+                    ),
+                  ],
+                )
               ],
             ),
           ),
@@ -222,5 +288,3 @@ class _HomePageState extends State<HomePage> {
     );
   }
 }
-
-

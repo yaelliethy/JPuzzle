@@ -4,7 +4,7 @@ import 'package:jpuzzle/models/User.dart';
 class FirestoreProvider {
   final CollectionReference _users = FirebaseFirestore.instance.collection('users');
 
-  Future<User> addUser(String name, String email) async {
+  Future<User> addUser(String name, String email, String profilePicUrl) async {
     final DocumentSnapshot result = await _users.doc(email).get();
     //If the user doesn't exist, add it to the database
     if (!result.exists) {
@@ -15,7 +15,8 @@ class FirestoreProvider {
         'highScoreTime': 0,
         'highScoreDimension': 0,
         'email': email,
-        'Games':{}
+        'Games':{},
+        'profilePicUrl': profilePicUrl,
       });
     }
     return await getUser(email);
@@ -45,6 +46,7 @@ class FirestoreProvider {
         'highScoreDate': game.date,
         'highScoreTime': game.time,
         'highScoreDimension': game.dimension,
+        'highScoreGame': game.toJson(),
       });
     }
     await _users.doc(user.email).update({"Games": FieldValue.arrayUnion([game.toJson()])});
@@ -57,5 +59,14 @@ class FirestoreProvider {
       gameList.add(Game.fromJson(game));
     }
     return gameList;
+  }
+  Future<Map<User, Game>> getLeaders() async{
+    Map<User, Game> leaders={};
+    List<QueryDocumentSnapshot> data = (await _users.orderBy('highScore', descending: true).limit(100).get()).docs;
+    for (QueryDocumentSnapshot snapshot in data){
+      User user=User.fromJson(snapshot.data() as Map<String, dynamic>);
+      leaders[user]=Game.fromJson((snapshot.data() as Map<String, dynamic>)['highScoreGame']);
+    }
+    return leaders;
   }
 }

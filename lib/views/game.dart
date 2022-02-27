@@ -166,27 +166,6 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
                         ),
                       ),
                     ),
-                    TextButton(
-                      onPressed: () {
-                        Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) {
-                              return Leaderboard();
-                            },
-                          ),
-                        );
-                      },
-                      child: ListTile(
-                        leading: Icon(FontAwesomeIcons.trophy),
-                        title: Text(
-                          'Leaderboard',
-                          style: TextStyle(
-                            color: Color(0xFFFF4C29),
-                          ),
-                        ),
-                      ),
-                    ),
                   ],
                 ),
               );
@@ -568,34 +547,103 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
                       //Alert user that his game won't be stored
                       showDialog(
                         context: context,
-                        builder: (BuildContext context) {
-                          return AlertDialog(
-                            title: Text('Solve'),
-                            content: Text(
-                                'Are you sure you want to the computer to ssolve this game? This will not be stored.'),
-                            actions: <Widget>[
-                              TextButton(
-                                child: Text('Cancel'),
-                                onPressed: () {
-                                  Navigator.of(context).pop();
-                                },
+                        builder: (context) {
+                          return LoaderOverlay(
+                            overlayWidget: Center(
+                              child: CircularProgressIndicator(
+                                color: Colors.yellow,
                               ),
-                              TextButton(
-                                child: Text('Solve'),
-                                onPressed: () {
-                                  Navigator.of(context).pop();
-                                  setState(() {
-                                    userSolved = false;
-                                    computerSolved = true;
-                                    solving = true;
-                                  });
-                                  solve();
-                                },
+                            ),
+                            overlayOpacity: 0.7,
+                            overlayColor: Colors.black,
+                            useDefaultLoading: false,
+                            child: AlertDialog(
+                              backgroundColor: kBackgroundColor,
+                              title: ListTile(
+                                title: Text(
+                                  'Are you sure you want to the computer to solve this game? This will not be stored.',
+                                  style: TextStyle(
+                                    fontSize: 14.0,
+                                    color: kAccentColor,
+                                  ),
+                                ),
+                                subtitle: Divider(
+                                  endIndent: 50.0,
+                                  indent: 50.0,
+                                  thickness: 1.5,
+                                ),
                               ),
-                            ],
+                              actions: [
+                                TextButton(
+                                  onPressed: () {
+                                    Navigator.of(context).pop();
+                                    setState(() {
+                                      userSolved = false;
+                                      computerSolved = true;
+                                      solving = true;
+                                    });
+                                    solve();
+                                  },
+                                  child: ListTile(
+                                    leading: Icon(Icons.forward),
+                                    title: Text(
+                                      'Yes',
+                                      style: TextStyle(
+                                        color: kPrimaryColor,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                TextButton(
+                                  onPressed: () {
+                                    Navigator.of(context).pop();
+                                  },
+                                  child: ListTile(
+                                    leading: Icon(Icons.cancel),
+                                    title: Text(
+                                      'No',
+                                      style: TextStyle(
+                                        color: kPrimaryColor,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
                           );
                         },
                       );
+                      // showDialog(
+                      //   context: context,
+                      //   builder: (BuildContext context) {
+                      //     return AlertDialog(
+                      //       title: Text('Solve'),
+                      //       content: Text(
+                      //           'Are you sure you want to the computer to ssolve this game? This will not be stored.'),
+                      //       actions: <Widget>[
+                      //         TextButton(
+                      //           child: Text('Cancel'),
+                      //           onPressed: () {
+                      //             Navigator.of(context).pop();
+                      //           },
+                      //         ),
+                      //         TextButton(
+                      //           child: Text('Solve'),
+                      //           onPressed: () {
+                      //             Navigator.of(context).pop();
+                      //             setState(() {
+                      //               userSolved = false;
+                      //               computerSolved = true;
+                      //               solving = true;
+                      //             });
+                      //             solve();
+                      //           },
+                      //         ),
+                      //       ],
+                      //     );
+                      //
+                      //   },
+                      // );
                     },
                     style: ElevatedButton.styleFrom(
                       primary: kPrimaryColor,
