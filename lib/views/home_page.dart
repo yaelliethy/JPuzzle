@@ -25,13 +25,15 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   double _dimensions = 3;
   late Widget _icon;
-  FirestoreProvider firestoreProvider=FirestoreProvider();
-  String highScore="";
+  FirestoreProvider firestoreProvider = FirestoreProvider();
+  String highScore = "";
   @override
   void initState() {
-    firestoreProvider.getUser(FirebaseAuth.instance.currentUser!.email!).then((value){
+    firestoreProvider
+        .getUser(FirebaseAuth.instance.currentUser!.email!)
+        .then((value) {
       setState(() {
-        highScore=value.highScore.toString();
+        highScore = value.highScore.toString();
       });
     });
     _icon = SvgPicture.asset(
@@ -130,12 +132,14 @@ class _HomePageState extends State<HomePage> {
               color: Colors.white,
             ),
           ),
-          highScore!=""?Text(
-            'High score: ${highScore}',
-            style: TextStyle(
-              color: Colors.white,
-            ),
-          ):Container(),
+          highScore != ""
+              ? Text(
+                  'High score: ${highScore}',
+                  style: TextStyle(
+                    color: Colors.white,
+                  ),
+                )
+              : Container(),
           Padding(
             padding: const EdgeInsets.symmetric(
               horizontal: 100.0,
@@ -221,60 +225,70 @@ class _HomePageState extends State<HomePage> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    ElevatedButton(
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => GameHistory(),
+                    Expanded(
+                      child: ElevatedButton(
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => GameHistory(),
+                            ),
+                          );
+                        },
+                        style: ElevatedButton.styleFrom(
+                          primary: kPrimaryColor,
+                          shape: RoundedRectangleBorder(
+                            side: BorderSide(
+                              width: 5.0,
+                            ),
+                            borderRadius: BorderRadius.circular(10.0),
                           ),
-                        );
-                      },
-                      style: ElevatedButton.styleFrom(
-                        primary: kPrimaryColor,
-                        shape: RoundedRectangleBorder(
-                          side: BorderSide(
-                            width: 5.0,
-                          ),
-                          borderRadius: BorderRadius.circular(10.0),
+                          elevation: 10.0,
                         ),
-                        elevation: 10.0,
-                      ),
-                      child: Padding(
-                        padding: EdgeInsets.only(top:10.0, bottom: 10.0, left: 20.0, right: 20.0),
-                        child: Icon(
-                          FontAwesomeIcons.history,
-                          color: kBackgroundColor,
+                        child: Padding(
+                          padding: EdgeInsets.symmetric(
+                            vertical: 20.0,
+                            horizontal: 20.0,
+                          ),
+                          child: Icon(
+                            FontAwesomeIcons.history,
+                            color: kBackgroundColor,
+                          ),
                         ),
                       ),
                     ),
                     SizedBox(
                       width: 10,
                     ),
-                    ElevatedButton(
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => Leaderboard(),
+                    Expanded(
+                      child: ElevatedButton(
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => Leaderboard(),
+                            ),
+                          );
+                        },
+                        style: ElevatedButton.styleFrom(
+                          primary: kPrimaryColor,
+                          shape: RoundedRectangleBorder(
+                            side: BorderSide(
+                              width: 5.0,
+                            ),
+                            borderRadius: BorderRadius.circular(10.0),
                           ),
-                        );
-                      },
-                      style: ElevatedButton.styleFrom(
-                        primary: kPrimaryColor,
-                        shape: RoundedRectangleBorder(
-                          side: BorderSide(
-                            width: 5.0,
-                          ),
-                          borderRadius: BorderRadius.circular(10.0),
+                          elevation: 10.0,
                         ),
-                        elevation: 10.0,
-                      ),
-                      child: Padding(
-                        padding: EdgeInsets.only(top:10.0, bottom: 10.0, left: 20.0, right: 20.0),
-                        child: Icon(
-                          FontAwesomeIcons.trophy,
-                          color: kBackgroundColor,
+                        child: Padding(
+                          padding: EdgeInsets.symmetric(
+                            vertical: 20.0,
+                            horizontal: 20.0,
+                          ),
+                          child: Icon(
+                            FontAwesomeIcons.trophy,
+                            color: kBackgroundColor,
+                          ),
                         ),
                       ),
                     ),

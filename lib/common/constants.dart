@@ -6,7 +6,9 @@ const Color kBackgroundColor = Color(0xFF810034);
 const Color kPrimaryColor = Color(0xFFFF005C);
 
 const Color kAccentColor = Color(0xFFFFF600);
+
 const Color kOrange = Color(0xFFFF4C29);
+
 TextStyle kHeaderStyle = GoogleFonts.poppins(
   fontSize: 28.0,
   fontWeight: FontWeight.bold,
