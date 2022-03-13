@@ -1,6 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -12,8 +11,7 @@ import 'package:jpuzzle/common/constants.dart';
 import 'package:jpuzzle/models/Game.dart';
 import 'package:jpuzzle/models/Tile.dart';
 import 'package:jpuzzle/services/firestore.dart';
-import 'package:jpuzzle/views/home_page.dart';
-import 'package:jpuzzle/views/leaderboard.dart';
+import 'package:jpuzzle/widgets/rounded_button.dart';
 import 'package:loader_overlay/loader_overlay.dart';
 
 class GameScreen extends StatefulWidget {
@@ -33,7 +31,7 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
   List<dynamic> axes = [];
   List<int> solution = [];
   List<int> originalSolution = [];
-  List<int> userMoves=[];
+  List<int> userMoves = [];
   List<Tile> originalTiles = [];
   bool solving = false;
   bool userSolved = false;
@@ -45,7 +43,7 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
   int score = 0;
   bool playing = true;
   bool doneSolving = false;
-  FirestoreProvider firestoreProvider=FirestoreProvider();
+  FirestoreProvider firestoreProvider = FirestoreProvider();
   @override
   void initState() {
     shuffle = Shuffle();
@@ -63,14 +61,14 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
     tiles.add(Tile(
         index: (widget.dimension * widget.dimension) - 1,
         type: TileType.target));
-    while(true) {
+    while (true) {
       List<dynamic> shuffledTiles = shuffle.shuffle(tiles, widget.dimension);
       tiles = shuffledTiles[0];
       originalTiles = List.from(shuffledTiles[0]);
       solution = shuffledTiles[1];
       originalSolution = List.from(shuffledTiles[1]);
       targetIndex = shuffledTiles[2];
-      if(base.isSolvable(tiles)){
+      if (base.isSolvable(tiles)) {
         break;
       }
     }
@@ -98,13 +96,12 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
   Future<void> scoreBoard() async {
     while (!(userSolved || computerSolved)) {
       await Future.delayed(Duration(seconds: 1));
-      if(!(userSolved || computerSolved)) {
+      if (!(userSolved || computerSolved)) {
         setState(() {
           time++;
-          score =
-              ((((widget.dimension ^ 2) * originalSolution.length) / time) *
+          score = ((((widget.dimension ^ 2) * originalSolution.length) / time) *
                   100)
-                  .toInt();
+              .toInt();
         });
       }
     }
@@ -120,7 +117,7 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
 
   void calculateAxes() {
     base.isSolved(tiles).then((solved) {
-      if(solved){
+      if (solved) {
         if (solved) {
           showDialog(
             context: context,
@@ -172,7 +169,7 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
             },
           );
         }
-        doneSolving=true;
+        doneSolving = true;
         _controller.stop();
       }
       if (solved && (computerSolved == false)) {
@@ -221,7 +218,7 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
                 return Stack(
                   children: [
                     tiles[index].gameIndex ==
-                        widget.dimension * widget.dimension - 1
+                            widget.dimension * widget.dimension - 1
                         ? SvgPicture.asset("assets/images/tiles/target.svg")
                         : Container(),
                     Base.getImageFromTileType(tiles[index].type),
@@ -415,73 +412,73 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
                     widget.dimension.toDouble(),
                 child: solving == false
                     ? GridView.count(
-                  crossAxisCount: widget.dimension,
-                  children: List.generate(tiles.length, (index) {
-                    Tile tile = tiles[index];
-                    Tile acceptedTile = tile;
+                        crossAxisCount: widget.dimension,
+                        children: List.generate(tiles.length, (index) {
+                          Tile tile = tiles[index];
+                          Tile acceptedTile = tile;
 
-                    return DragTarget<Tile>(
-                      builder: (context, List<Tile?> candidateData,
-                          rejectedData) {
-                        Widget newChild = Container(
-                          child: Builder(
-                            builder: (context) {
-                              return Stack(
-                                children: [
-                                  tiles[index].gameIndex ==
-                                      widget.dimension *
-                                          widget.dimension -
-                                          1
-                                      ? SvgPicture.asset(
-                                      "assets/images/tiles/target.svg")
-                                      : Container(),
-                                  Base.getImageFromTileType(
-                                      tiles[index].type),
-                                ],
+                          return DragTarget<Tile>(
+                            builder: (context, List<Tile?> candidateData,
+                                rejectedData) {
+                              Widget newChild = Container(
+                                child: Builder(
+                                  builder: (context) {
+                                    return Stack(
+                                      children: [
+                                        tiles[index].gameIndex ==
+                                                widget.dimension *
+                                                        widget.dimension -
+                                                    1
+                                            ? SvgPicture.asset(
+                                                "assets/images/tiles/target.svg")
+                                            : Container(),
+                                        Base.getImageFromTileType(
+                                            tiles[index].type),
+                                      ],
+                                    );
+                                  },
+                                ),
+                                color: Colors.transparent,
+                                width: (100 - (widget.dimension * 5)),
+                                height: (100 - (widget.dimension * 5)),
                               );
+                              dynamic axis = axes[index];
+                              if (tile.type == TileType.target ||
+                                  axis == null ||
+                                  computerSolved == true ||
+                                  solving == true ||
+                                  userSolved == true) {
+                                return newChild;
+                              } else {
+                                return Draggable<Tile>(
+                                  axis: axis,
+                                  data: tiles[index],
+                                  child: newChild,
+                                  feedback: newChild,
+                                  childWhenDragging: Container(),
+                                );
+                              }
                             },
-                          ),
-                          color: Colors.transparent,
-                          width: (100 - (widget.dimension * 5)),
-                          height: (100 - (widget.dimension * 5)),
-                        );
-                        dynamic axis = axes[index];
-                        if (tile.type == TileType.target ||
-                            axis == null ||
-                            computerSolved == true ||
-                            solving == true ||
-                            userSolved == true) {
-                          return newChild;
-                        } else {
-                          return Draggable<Tile>(
-                            axis: axis,
-                            data: tiles[index],
-                            child: newChild,
-                            feedback: newChild,
-                            childWhenDragging: Container(),
+                            onWillAccept: (data) {
+                              return tile.type == TileType.target;
+                            },
+                            onAccept: (data) {
+                              setState(() {
+                                acceptedTile = data;
+                                solution.add(targetIndex);
+                                targetIndex = acceptedTile.gameIndex;
+                                tiles[acceptedTile.gameIndex] = tiles[index];
+                                tiles[index] = acceptedTile;
+                                tiles[acceptedTile.gameIndex].gameIndex =
+                                    data.gameIndex;
+                                tiles[index].gameIndex = index;
+                                userMoves.add(targetIndex);
+                                calculateAxes();
+                              });
+                            },
                           );
-                        }
-                      },
-                      onWillAccept: (data) {
-                        return tile.type == TileType.target;
-                      },
-                      onAccept: (data) {
-                        setState(() {
-                          acceptedTile = data;
-                          solution.add(targetIndex);
-                          targetIndex = acceptedTile.gameIndex;
-                          tiles[acceptedTile.gameIndex] = tiles[index];
-                          tiles[index] = acceptedTile;
-                          tiles[acceptedTile.gameIndex].gameIndex =
-                              data.gameIndex;
-                          tiles[index].gameIndex = index;
-                          userMoves.add(targetIndex);
-                          calculateAxes();
-                        });
-                      },
-                    );
-                  }),
-                )
+                        }),
+                      )
                     : getSolvingGrid(),
               ),
               SizedBox(
@@ -489,187 +486,195 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
               ),
               computerSolved
                   ? GestureDetector(
-                onTap: () {
-                  togglePlay();
-                },
-                child: Column(
-                  children: [
-                    !doneSolving?AnimatedIcon(
-                      icon: AnimatedIcons.pause_play,
-                      progress: _playPauseController,
-                      size: 100,
-                      color: Colors.white,
-                    ):Container() ,
-                    ElevatedButton(
-                      child: Text('Go home'),
-                      onPressed: () {
-                        Navigator.of(context).pop();
+                      onTap: () {
+                        togglePlay();
                       },
-                      style: ElevatedButton.styleFrom(
-                        primary: kPrimaryColor,
+                      child: Column(
+                        children: [
+                          !doneSolving
+                              ? AnimatedIcon(
+                                  icon: AnimatedIcons.pause_play,
+                                  progress: _playPauseController,
+                                  size: 100,
+                                  color: kAccentColor,
+                                )
+                              : Container(),
+                          RoundedButton(
+                            dimensions: 0,
+                            text: 'Home',
+                            icon: FontAwesomeIcons.home,
+                            onTap: () {
+                              Navigator.pop(context);
+                            },
+                          ),
+                        ],
                       ),
                     )
-                  ],
-                ),
-              )
                   : (userSolved
-                  ? Column(
-                children: [
-                  RichText(
-                    text: TextSpan(
-                      style: GoogleFonts.poppins(
-                        fontSize: 30.0,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.yellow,
-                      ),
-                      children: [
-                        const TextSpan(text: 'You solved it!'),
-                        TextSpan(text: "Your score is: $score")
-                      ],
-                    ),
-                  ),
-                  ElevatedButton(
-                    child: Text('Go home'),
-                    onPressed: () {
-                      goHome(context);
-                    },
-                    style: ElevatedButton.styleFrom(
-                      primary: kPrimaryColor,
-                    ),
-                  )
-                ],
-              )
-                  : Column(
-                children: [
-                  ElevatedButton(
-                    child: Text('Solve'),
-                    onPressed: () {
-                      //Alert user that his game won't be stored
-                      showDialog(
-                        context: context,
-                        builder: (context) {
-                          return LoaderOverlay(
-                            overlayWidget: Center(
-                              child: CircularProgressIndicator(
+                      ? Column(
+                          children: [
+                            RichText(
+                              text: TextSpan(
+                                style: GoogleFonts.poppins(
+                                  fontSize: 30.0,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.yellow,
+                                ),
+                                children: [
+                                  const TextSpan(text: 'You solved it!'),
+                                  TextSpan(text: "Your score is: $score")
+                                ],
+                              ),
+                            ),
+                            ElevatedButton(
+                              child: Text('Go home'),
+                              onPressed: () {
+                                goHome(context);
+                              },
+                              style: ElevatedButton.styleFrom(
+                                primary: kPrimaryColor,
+                              ),
+                            )
+                          ],
+                        )
+                      : Column(
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 100.0,
+                              ),
+                              child: RoundedButton(
+                                dimensions: 0,
+                                text: 'Solve',
+                                icon: FontAwesomeIcons.check,
+                                onTap: () {
+                                  showDialog(
+                                    context: context,
+                                    builder: (context) {
+                                      return LoaderOverlay(
+                                        overlayWidget: Center(
+                                          child: CircularProgressIndicator(
+                                            color: Colors.yellow,
+                                          ),
+                                        ),
+                                        overlayOpacity: 0.7,
+                                        overlayColor: Colors.black,
+                                        useDefaultLoading: false,
+                                        child: AlertDialog(
+                                          backgroundColor: kBackgroundColor,
+                                          title: ListTile(
+                                            title: Text(
+                                              'Are you sure you want to the computer to solve this game? This will not be stored.',
+                                              style: TextStyle(
+                                                fontSize: 14.0,
+                                                color: kAccentColor,
+                                              ),
+                                            ),
+                                            subtitle: Divider(
+                                              endIndent: 50.0,
+                                              indent: 50.0,
+                                              thickness: 1.5,
+                                            ),
+                                          ),
+                                          actions: [
+                                            TextButton(
+                                              onPressed: () {
+                                                Navigator.of(context).pop();
+                                                setState(() {
+                                                  userSolved = false;
+                                                  computerSolved = true;
+                                                  solving = true;
+                                                });
+                                                solve();
+                                              },
+                                              child: ListTile(
+                                                leading: Icon(Icons.forward),
+                                                title: Text(
+                                                  'Yes',
+                                                  style: TextStyle(
+                                                    color: kPrimaryColor,
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                            TextButton(
+                                              onPressed: () {
+                                                Navigator.of(context).pop();
+                                              },
+                                              child: ListTile(
+                                                leading: Icon(Icons.cancel),
+                                                title: Text(
+                                                  'No',
+                                                  style: TextStyle(
+                                                    color: kPrimaryColor,
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      );
+                                    },
+                                  );
+                                  // showDialog(
+                                  //   context: context,
+                                  //   builder: (BuildContext context) {
+                                  //     return AlertDialog(
+                                  //       title: Text('Solve'),
+                                  //       content: Text(
+                                  //           'Are you sure you want to the computer to ssolve this game? This will not be stored.'),
+                                  //       actions: <Widget>[
+                                  //         TextButton(
+                                  //           child: Text('Cancel'),
+                                  //           onPressed: () {
+                                  //             Navigator.of(context).pop();
+                                  //           },
+                                  //         ),
+                                  //         TextButton(
+                                  //           child: Text('Solve'),
+                                  //           onPressed: () {
+                                  //             Navigator.of(context).pop();
+                                  //             setState(() {
+                                  //               userSolved = false;
+                                  //               computerSolved = true;
+                                  //               solving = true;
+                                  //             });
+                                  //             solve();
+                                  //           },
+                                  //         ),
+                                  //       ],
+                                  //     );
+                                  //
+                                  //   },
+                                  // );
+                                },
+                              ),
+                            ),
+                            SizedBox(
+                              height: 10,
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 100.0,
+                              ),
+                              child: RoundedButton(
+                                dimensions: 0,
+                                text: 'Home',
+                                icon: FontAwesomeIcons.home,
+                                onTap: () => Navigator.pop(context),
+                              ),
+                            ),
+                            //Score
+                            Text(
+                              'Score: $score',
+                              style: GoogleFonts.poppins(
+                                fontSize: 30.0,
+                                fontWeight: FontWeight.bold,
                                 color: Colors.yellow,
                               ),
                             ),
-                            overlayOpacity: 0.7,
-                            overlayColor: Colors.black,
-                            useDefaultLoading: false,
-                            child: AlertDialog(
-                              backgroundColor: kBackgroundColor,
-                              title: ListTile(
-                                title: Text(
-                                  'Are you sure you want to the computer to solve this game? This will not be stored.',
-                                  style: TextStyle(
-                                    fontSize: 14.0,
-                                    color: kAccentColor,
-                                  ),
-                                ),
-                                subtitle: Divider(
-                                  endIndent: 50.0,
-                                  indent: 50.0,
-                                  thickness: 1.5,
-                                ),
-                              ),
-                              actions: [
-                                TextButton(
-                                  onPressed: () {
-                                    Navigator.of(context).pop();
-                                    setState(() {
-                                      userSolved = false;
-                                      computerSolved = true;
-                                      solving = true;
-                                    });
-                                    solve();
-                                  },
-                                  child: ListTile(
-                                    leading: Icon(Icons.forward),
-                                    title: Text(
-                                      'Yes',
-                                      style: TextStyle(
-                                        color: kPrimaryColor,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                                TextButton(
-                                  onPressed: () {
-                                    Navigator.of(context).pop();
-                                  },
-                                  child: ListTile(
-                                    leading: Icon(Icons.cancel),
-                                    title: Text(
-                                      'No',
-                                      style: TextStyle(
-                                        color: kPrimaryColor,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          );
-                        },
-                      );
-                      // showDialog(
-                      //   context: context,
-                      //   builder: (BuildContext context) {
-                      //     return AlertDialog(
-                      //       title: Text('Solve'),
-                      //       content: Text(
-                      //           'Are you sure you want to the computer to ssolve this game? This will not be stored.'),
-                      //       actions: <Widget>[
-                      //         TextButton(
-                      //           child: Text('Cancel'),
-                      //           onPressed: () {
-                      //             Navigator.of(context).pop();
-                      //           },
-                      //         ),
-                      //         TextButton(
-                      //           child: Text('Solve'),
-                      //           onPressed: () {
-                      //             Navigator.of(context).pop();
-                      //             setState(() {
-                      //               userSolved = false;
-                      //               computerSolved = true;
-                      //               solving = true;
-                      //             });
-                      //             solve();
-                      //           },
-                      //         ),
-                      //       ],
-                      //     );
-                      //
-                      //   },
-                      // );
-                    },
-                    style: ElevatedButton.styleFrom(
-                      primary: kPrimaryColor,
-                    ),
-                  ),
-                  SizedBox(height: 10,),
-                  ElevatedButton(
-                    child: Text('Go home'),
-                    onPressed: () {
-                      goHome(context);
-                    },
-                    style: ElevatedButton.styleFrom(
-                      primary: kPrimaryColor,
-                    ),
-                  ),
-                  //Score
-                  Text(
-                    'Score: $score',
-                    style: GoogleFonts.poppins(
-                      fontSize: 30.0,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.yellow,
-                    ),
-                  ),
-                ],
-              )),
+                          ],
+                        )),
             ],
           ),
         ),
@@ -691,7 +696,8 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
           time: time,
           userSolution: userMoves.reversed.toList());
       context.loaderOverlay.show();
-      await firestoreProvider.addGame(FirebaseAuth.instance.currentUser!.email!, game);
+      await firestoreProvider.addGame(
+          FirebaseAuth.instance.currentUser!.email!, game);
       context.loaderOverlay.hide();
     }
     //Navigate to home

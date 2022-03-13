@@ -124,9 +124,7 @@ class _LeaderboardState extends State<Leaderboard> {
                     onPressed: () {
                       Navigator.pop(context);
                     },
-                    icon: Icon(
-                      FontAwesomeIcons.arrowLeft
-                    ),
+                    icon: Icon(FontAwesomeIcons.arrowLeft),
                   ),
                   title: Text(
                     'Leaderboard',
@@ -137,7 +135,9 @@ class _LeaderboardState extends State<Leaderboard> {
                   child: FutureBuilder(
                     future: gamesFuture,
                     builder: (context, snapshot) {
-                      if (snapshot.connectionState == ConnectionState.done) {
+                      if (snapshot.connectionState == ConnectionState.done ||
+                          snapshot.hasData &&
+                              _buildGameHistoryItems().length > 0) {
                         return Center(
                           child: Container(
                             width: MediaQuery.of(context).size.width - 50,
@@ -147,15 +147,17 @@ class _LeaderboardState extends State<Leaderboard> {
                           ),
                         );
                       }
-                      if (!snapshot.hasData) {
+                      else if (_buildGameHistoryItems().length == 0) {
+                        print('No Game History Items');
                         return Center(
                           child: Lottie.network(
-                              'https://assets1.lottiefiles.com/packages/lf20_roylwd7o.json'),
+                            'https://assets1.lottiefiles.com/packages/lf20_roylwd7o.json',
+                          ),
                         );
                       }
                       return Center(
-                        child: SpinKitPouringHourGlassRefined(
-                          color: Colors.yellow,
+                        child: Lottie.network(
+                          'https://assets1.lottiefiles.com/packages/lf20_roylwd7o.json',
                         ),
                       );
                     },

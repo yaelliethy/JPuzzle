@@ -23,8 +23,9 @@ class _GameHistoryState extends State<GameHistory> {
   @override
   void initState() {
     firestoreProvider = FirestoreProvider();
-    gamesFuture =
-        firestoreProvider.getGames(FirebaseAuth.instance.currentUser!.email!);
+    gamesFuture = firestoreProvider.getGames(
+      FirebaseAuth.instance.currentUser!.email!,
+    );
     gamesFuture.then((value) {
       games = value.reversed.toList();
       expanded = List.generate(games.length, (_) => false);
@@ -39,9 +40,9 @@ class _GameHistoryState extends State<GameHistory> {
         width: 100,
         child: ExpansionTile(
           leading: CircleAvatar(
-            backgroundImage:
-                Image.network(FirebaseAuth.instance.currentUser!.photoURL!)
-                    .image,
+            backgroundImage: Image.network(
+              FirebaseAuth.instance.currentUser!.photoURL!,
+            ).image,
           ),
           title: Text(
             FirebaseAuth.instance.currentUser!.displayName!,
@@ -119,7 +120,9 @@ class _GameHistoryState extends State<GameHistory> {
                   child: FutureBuilder(
                     future: gamesFuture,
                     builder: (context, snapshot) {
-                      if (snapshot.connectionState == ConnectionState.done) {
+                      if (snapshot.connectionState == ConnectionState.done ||
+                          snapshot.hasData &&
+                              _buildGameHistoryItems().length > 0) {
                         return Center(
                           child: Container(
                             width: MediaQuery.of(context).size.width - 50,
@@ -129,7 +132,7 @@ class _GameHistoryState extends State<GameHistory> {
                           ),
                         );
                       }
-                      if (!snapshot.hasData) {
+                      else if (_buildGameHistoryItems().length == 0) {
                         return Center(
                           child: Lottie.network(
                             'https://assets1.lottiefiles.com/packages/lf20_roylwd7o.json',
@@ -137,8 +140,8 @@ class _GameHistoryState extends State<GameHistory> {
                         );
                       }
                       return Center(
-                        child: SpinKitPouringHourGlassRefined(
-                          color: kAccentColor,
+                        child: Lottie.network(
+                          'https://assets1.lottiefiles.com/packages/lf20_roylwd7o.json',
                         ),
                       );
                     },

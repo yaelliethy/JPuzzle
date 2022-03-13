@@ -1,4 +1,4 @@
-# jpuzzle
+# J-Puzzle
 
 A new Flutter project.
 
