@@ -2,6 +2,7 @@
 
 J-Puzzle is a pragmatic slide puzzle game, based on the concept of trying to arrange *tubed-blocks* to build up a path which goes from the *top-left* to the very *bottom-right* corner of the board.
 
+Demo URL: https://yaelliethy.github.io/JPuzzle/
 ---
 
 ## Features :sparkles:
