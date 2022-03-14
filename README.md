@@ -5,7 +5,7 @@ J-Puzzle is a pragmatic slide puzzle game, based on the concept of trying to arr
 Demo URL: https://yaelliethy.github.io/JPuzzle/
 ---
 
-## Features :sparkles:
+## Features ✨
 
 - Google Authentication
 - Persistent Login
@@ -16,11 +16,9 @@ Demo URL: https://yaelliethy.github.io/JPuzzle/
 
 ---
 
-### Important Notes :pushpin:
+### Important Notes 📌
 
 In order for the puzzle to work, put in mind that it *must* start with a **Horizontal Block** on the top-left corner of the board.
 ![Picture of the Horizontal Block](https://raw.githubusercontent.com/yaelliethy/JPuzzle/master/assets/images/Horizontal-Block.png)
 
 To use with IOS, add the GoogleService-Info.plist file to xcode by clicking on the project folder then add files then selecting the file
-
-
