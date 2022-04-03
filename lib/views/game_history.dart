@@ -18,8 +18,8 @@ class GameHistory extends StatefulWidget {
 class _GameHistoryState extends State<GameHistory> {
   late FirestoreProvider firestoreProvider;
   late Future<List<Game>> gamesFuture;
-  late List<Game> games;
-  late List<bool> expanded;
+  late List<Game> games=[];
+  late List<bool> expanded=[];
   @override
   void initState() {
     firestoreProvider = FirestoreProvider();
