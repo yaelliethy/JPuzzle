@@ -90,65 +90,63 @@ class _GameHistoryState extends State<GameHistory> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Center(
-        child: Expanded(
-          child: Container(
-            width: MediaQuery.of(context).size.width - 50,
-            padding: const EdgeInsets.all(10.0),
-            margin: const EdgeInsets.symmetric(
-              horizontal: 100.0,
-              vertical: 75.0,
-            ),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(30.0),
-              color: Colors.black.withOpacity(0.3),
-            ),
-            child: Column(
-              children: [
-                ListTile(
-                  leading: IconButton(
-                    onPressed: () {
-                      Navigator.pop(context);
-                    },
-                    icon: Icon(FontAwesomeIcons.arrowLeft),
-                  ),
-                  title: Text(
-                    'History',
-                    style: kHeaderStyle,
-                  ),
+        child: Container(
+          width: MediaQuery.of(context).size.width - 50,
+          padding: const EdgeInsets.all(10.0),
+          margin: const EdgeInsets.symmetric(
+            horizontal: 100.0,
+            vertical: 75.0,
+          ),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(30.0),
+            color: Colors.black.withOpacity(0.3),
+          ),
+          child: Column(
+            children: [
+              ListTile(
+                leading: IconButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  icon: Icon(FontAwesomeIcons.arrowLeft),
                 ),
-                Expanded(
-                  child: FutureBuilder(
-                    future: gamesFuture,
-                    builder: (context, snapshot) {
-                      if (snapshot.connectionState == ConnectionState.done ||
-                          snapshot.hasData &&
-                              _buildGameHistoryItems().length > 0) {
-                        return Center(
-                          child: Container(
-                            width: MediaQuery.of(context).size.width - 50,
-                            child: ListView(
-                              children: _buildGameHistoryItems(),
-                            ),
+                title: Text(
+                  'History',
+                  style: kHeaderStyle,
+                ),
+              ),
+              Expanded(
+                child: FutureBuilder(
+                  future: gamesFuture,
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.done ||
+                        snapshot.hasData &&
+                            _buildGameHistoryItems().length > 0) {
+                      return Center(
+                        child: Container(
+                          width: MediaQuery.of(context).size.width - 50,
+                          child: ListView(
+                            children: _buildGameHistoryItems(),
                           ),
-                        );
-                      }
-                      else if (_buildGameHistoryItems().length == 0) {
-                        return Center(
-                          child: Lottie.network(
-                            'https://assets1.lottiefiles.com/packages/lf20_roylwd7o.json',
-                          ),
-                        );
-                      }
+                        ),
+                      );
+                    }
+                    else if (_buildGameHistoryItems().length == 0) {
                       return Center(
                         child: Lottie.network(
                           'https://assets1.lottiefiles.com/packages/lf20_roylwd7o.json',
                         ),
                       );
-                    },
-                  ),
+                    }
+                    return Center(
+                      child: Lottie.network(
+                        'https://assets1.lottiefiles.com/packages/lf20_roylwd7o.json',
+                      ),
+                    );
+                  },
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
       ),
